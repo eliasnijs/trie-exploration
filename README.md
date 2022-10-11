@@ -192,6 +192,23 @@ De `master` branch op SubGIT stelt jouw indiening voor. Je kunt voor de deadline
 zoveel pushen als je wilt. Zorg ervoor dat je voor de deadline zeker je finale
 versie naar de **`master`** branch hebt gepusht, want enkel die zal verbeterd worden.
 
+Nieuwe versies van git gaan de standaard branchnaam instellen op `main`. Dit zorgt echter voor problemen met SubGIT. Je kan je `main`-branch hernoemen naar `master` met het commando:
+
+```bash
+git branch -m main master
+```
+
+#### Pushen naar een andere branch
+
+Het is sterk aangeraden om regelmatig te pushen naar SubGIT. Als je code niet aanvaard wordt op de `master`-branch, kan je een nieuwe branch aanmaken met het volgende commando:
+
+```bash
+git switch -c develop # hier is 'develop' de nieuwe branch naam
+git push origin develop
+```
+Voor oudere versies van git kan bovenstaande `push` nog een foutmelding geven omdat er geen upstream is ingesteld, in dat geval moet je de optie `-u` meegeven om die in te stellen.
+
+
 #### Controleren of je zeker goed hebt ingediend
 
 Je kunt jouw indiening bekijken door jouw repository nog eens te clonen in een
