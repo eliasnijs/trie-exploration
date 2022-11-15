@@ -128,16 +128,16 @@ ternarytrie_add(TernaryTrie* tst, const char* s)
  * @return true if the string was present and has been removed, false if it was not present
  */
 void
-_ternarytrie_remove(TernaryTrieNode **n, const char *s, int32 *rmcnt)
+_ternarytrie_remove(TernaryTrieNode **n, const char *s, bool *is_success)
 {
   if (!(*n)) return;
   if (*s != 0) {
     if (*s < (*n)->splitchar)
-      _ternarytrie_remove(&(*n)->lo, s, rmcnt);
+      _ternarytrie_remove(&(*n)->lo, s, is_success);
     else if (*s > (*n)->splitchar)
-      _ternarytrie_remove(&(*n)->hi, s, rmcnt);
+      _ternarytrie_remove(&(*n)->hi, s, is_success);
     else
-      _ternarytrie_remove(&(*n)->eq, ++s, rmcnt);
+      _ternarytrie_remove(&(*n)->eq, ++s, is_success);
   }
   if (!(*n)->eq) {
     TernaryTrieNode *t = *n;
@@ -153,20 +153,18 @@ _ternarytrie_remove(TernaryTrieNode **n, const char *s, int32 *rmcnt)
     else
       *n = ((*n)->lo) ? t->lo : t->hi;
     free(t);
-    ++(*rmcnt);
+    *is_success = true;
   }
 }
 
 bool
 ternarytrie_remove(TernaryTrie* tst, const char *s)
 {
-  int32 rmcnt = 0;
-  _ternarytrie_remove(&tst->root, s, &rmcnt);
-  if (rmcnt > 0) {
+  bool is_success = false;
+  _ternarytrie_remove(&tst->root, s, &is_success);
+  if (is_success)
     --tst->wc;
-    return true;
-  }
-  return false;
+  return is_success;
 }
 
 /**
