@@ -1,6 +1,12 @@
 #include "test.h"
 #include "ternarytrie.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#include "base.h"
+
 #define TEST_SIZE(ct, size) \
     TEST_CHECK(ternarytrie_size(ct) == size); \
     TEST_MSG("Size: %zu", ternarytrie_size(ct))
@@ -83,6 +89,7 @@ void test_remove_more() {
     const char* two = "two";
     const char* twenty = "twenty";
     const char* twentytwo = "twentytwo";
+
     TEST_CHECK(ternarytrie_add(ct, one));
     TEST_CHECK(ternarytrie_add(ct, two));
     TEST_CHECK(ternarytrie_add(ct, twenty));
@@ -91,8 +98,11 @@ void test_remove_more() {
     TEST_SIZE(ct, 4);
 
     TEST_CHECK(ternarytrie_remove(ct, one));
+
     TEST_CHECK(ternarytrie_remove(ct, two));
+    TEST_CHECK(ternarytrie_search(ct, two) == false);
     TEST_CHECK(ternarytrie_remove(ct, twenty));
+    TEST_CHECK(ternarytrie_search(ct, twenty) == false);
     TEST_CHECK(ternarytrie_remove(ct, twentytwo));
 
     TEST_SIZE(ct, 0);

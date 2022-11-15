@@ -1,5 +1,13 @@
+#include "ternarytrie.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#include "base.h"
+
 typedef struct ttrie_node TernaryTrieNode;
-struct tst_node {
+struct ttrie_node {
   char             splitchar;
   TernaryTrieNode  *lo, *eq, *hi;
 };
@@ -7,7 +15,7 @@ struct tst_node {
 typedef struct ttrie TernaryTrie;
 struct ttrie {
   TernaryTrieNode  *root;
-  uint16           wc;
+  size_t           wc;
 };
 
 /**
@@ -16,11 +24,12 @@ struct ttrie {
  * @return a pointer to an empty Trie struct
  */
 TernaryTrie *
-ternarytrie_init();
+ternarytrie_init()
 {
   TernaryTrie *tst = (TernaryTrie *)malloc(sizeof(TernaryTrie));
   tst->root = 0x0;
   tst->wc = 0;
+  return tst;
 }
 
 
@@ -39,7 +48,7 @@ _ternarytrie_die(TernaryTrieNode *n)
   free(n);
 }
 
-void ternarytrie_free(TernaryTrie* tst);
+void ternarytrie_free(TernaryTrie* tst)
 {
   _ternarytrie_die(tst->root);
 }
@@ -52,17 +61,17 @@ void ternarytrie_free(TernaryTrie* tst);
  * @return true if the string is contained within this trie, false otherwise
  */
 bool
-ternarytrie_search(TernaryTrie* tst, const char* s);
+ternarytrie_search(TernaryTrie* tst, const char* s)
 {
   TernaryTrieNode *n = tst->root;
   while (n) {
+    if (!*s && !n->splitchar) return 1;
     if (*s < n->splitchar)
       n = n->lo;
     else if (*s > n->splitchar)
       n = n->hi;
     else {
       ++s;
-      if (!*s) return 1;
       n = n->eq;
     }
   }
@@ -77,17 +86,21 @@ ternarytrie_search(TernaryTrie* tst, const char* s);
  * @return true if the trie was changed by this operation, false if it was already present
  */
 bool
-ternarytrie_add(TernaryTrie* tst, const char* s);
+ternarytrie_add(TernaryTrie* tst, const char* s)
 {
+  bool completed = false, already_present = true;
   TernaryTrieNode **n = &tst->root;
-  while (*s) {
+  while (!completed) {
     if (!*n) {
       *n = (TernaryTrieNode *)malloc(sizeof(TernaryTrieNode));
       if (!*n)
         return false;
       (*n)->splitchar = *s;
       (*n)->lo = (*n)->eq = (*n)->hi = 0;
+      already_present = false;
     }
+    if (!*s)
+      completed = true;
     if (*s < (*n)->splitchar)
       n = &(*n)->lo;
     else if (*s > (*n)->splitchar)
@@ -97,10 +110,12 @@ ternarytrie_add(TernaryTrie* tst, const char* s);
       n = &(*n)->eq;
     }
   }
-  ++tst->wc;
-  return true;
+  if (!already_present) {
+    ++tst->wc;
+    return true;
+  }
+  return false;
 }
-
 
 /**
  * Remove a string from this trie.
@@ -112,32 +127,46 @@ ternarytrie_add(TernaryTrie* tst, const char* s);
  * @param string
  * @return true if the string was present and has been removed, false if it was not present
  */
-bool
-_ternarytrie_remove(TernaryTrieNode **n, char *s)
+void
+_ternarytrie_remove(TernaryTrieNode **n, const char *s, int32 *rmcnt)
 {
-  if (!(*n)) return false;
-  if (*s < (*n)->splitchar)
-    _ternarytrie_remove(&(*n)->lo, s);
-  else if (*s > (*n)->splitchar)
-    _ternarytrie_remove(&(*n)->hi, s);
-  else {
-    if (*s != 0)
-      _ternarytrie_remove(&(*n)->eq, ++s);
+  if (!(*n)) return;
+  if (*s != 0) {
+    if (*s < (*n)->splitchar)
+      _ternarytrie_remove(&(*n)->lo, s, rmcnt);
+    else if (*s > (*n)->splitchar)
+      _ternarytrie_remove(&(*n)->hi, s, rmcnt);
+    else
+      _ternarytrie_remove(&(*n)->eq, ++s, rmcnt);
   }
-  if (!(*n)->lo && !(*n)->eq && !(*n)->hi) {
-    free(*n);
-    *_n = 0x0;
+  if (!(*n)->eq) {
+    TernaryTrieNode *t = *n;
+    if ((*n)->lo && (*n)->hi) {
+      *n = t->lo;
+      TernaryTrieNode *l = (*n)->hi;
+      (*n)->hi = t->hi;
+      TernaryTrieNode *iter = (*n)->hi;
+      while (iter->lo != 0)
+        iter = iter->lo;
+      iter->lo = l;
+    }
+    else
+      *n = ((*n)->lo) ? t->lo : t->hi;
+    free(t);
+    ++(*rmcnt);
   }
-  return true;
 }
 
 bool
-ternarytrie_remove(TernaryTrie* tst, const char* s)
+ternarytrie_remove(TernaryTrie* tst, const char *s)
 {
-  bool result = _ternarytrie_remove(&tst->root, s);
-  if (result)
+  int32 rmcnt = 0;
+  _ternarytrie_remove(&tst->root, s, &rmcnt);
+  if (rmcnt > 0) {
     --tst->wc;
-  return result;
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -147,7 +176,7 @@ ternarytrie_remove(TernaryTrie* tst, const char* s)
  * @return the number of strings in this trie
  */
 size_t
-ternarytrie_size(TernaryTrie* tst);
+ternarytrie_size(TernaryTrie* tst)
 {
   return tst->wc;
 }
