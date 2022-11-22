@@ -3,10 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include "base.h"
 
 struct ttrie_node  {
         char splitchar;
@@ -24,7 +21,6 @@ ternarytrie_init()
 	struct ttrie *tst = (struct ttrie *)calloc(1, sizeof(struct ttrie));
 	return tst;
 }
-
 
 internal void
 _ternarytrie_die(struct ttrie_node *n)
@@ -44,7 +40,7 @@ void ternarytrie_free(struct ttrie *tst)
   free(tst);
 }
 
-bool8
+bool
 ternarytrie_search(struct ttrie *tst, const char* s)
 {
 	struct ttrie_node *n = tst->root;
@@ -64,10 +60,10 @@ ternarytrie_search(struct ttrie *tst, const char* s)
 	return 0;
 }
 
-bool8
+bool
 ternarytrie_add(struct ttrie *tst, const char* s)
 {
-	bool8 completed = false, already_present = true;
+	bool completed = false, already_present = true;
 	struct ttrie_node **n = &tst->root;
 	while (!completed) {
 		if (!*n) {
@@ -99,7 +95,7 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 }
 
 internal void
-_ternarytrie_remove(struct ttrie_node **n, const char *s, bool8 *is_success)
+_ternarytrie_remove(struct ttrie_node **n, const char *s, bool *is_success)
 {
 	if (!(*n)) {
 		return;
@@ -132,10 +128,10 @@ _ternarytrie_remove(struct ttrie_node **n, const char *s, bool8 *is_success)
 	}
 }
 
-bool8
+bool
 ternarytrie_remove(struct ttrie *tst, const char *s)
 {
-	bool8 is_success = false;
+	bool is_success = false;
 	_ternarytrie_remove(&tst->root, s, &is_success);
 	if (is_success) {
 		--tst->wc;
