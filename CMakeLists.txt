@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(AD3-project-2022-2023 C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 
 add_compile_options(-Wall -Wextra -Werror -g -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -D_POSIX_C_SOURCE=199309L )
 

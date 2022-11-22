@@ -8,19 +8,19 @@
 #include "base.h"
 
 /* function definitions */
-internal uint64 nanos();
+/* internal uint64 nanos(); */
 internal int8 getbit(const char *w, size_t size);
 internal uint32 filelen(FILE *f);
 internal void shuffle_ptr(void **buffer, uint32 count);
 
 /* function implementations */
-internal uint64
-nanos()
-{
-  struct timespec start;
-  clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-  return((uint64)start.tv_sec*1000000000 + (uint64)start.tv_nsec);
-}
+/* internal uint64 */
+/* nanos() */
+/* { */
+/*   struct timespec start; */
+/*   clock_gettime(CLOCK_MONOTONIC_RAW, &start); */
+/*   return((uint64)start.tv_sec*1000000000 + (uint64)start.tv_nsec); */
+/* } */
 
 internal int8
 getbit(const char *w, size_t i)
@@ -41,9 +41,7 @@ filelen(FILE *f)
 internal void
 shuffle_ptr(void **buffer, uint32 count)
 {
-	srand(nanos()); // TODO(Elias): set random seed based on the current
-			// time, not sure if this is a legitimate way to set
-			// a seed
+	// srand(nanos());
 	for (uint32 i1 = 0; i1 < count - 1; ++i1) {
 		int32 i2 = i1 + (rand() % (count - i1));
 		Swap(buffer[i1], buffer[i2], void*);
