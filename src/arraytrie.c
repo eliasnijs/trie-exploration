@@ -1,83 +1,159 @@
-#include "arraytrie.h"
 
-struct atrie
-{
-  size_t wc;
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
+#include "base.h"
+
+#define ALPHASIZE 0b1111111
+
+struct atrie_node {
+	char *s;
+	uint16 skip;
+	struct atrie_node *next[ALPHASIZE];
 };
 
-/**
- * Allocate and initialize an empty Trie.
- *
- * @return a pointer to an empty Trie struct
- */
-ArrayTrie *
+struct atrie {
+	size_t wc;
+	struct atrie_node *root;
+};
+
+struct atrie *
 arraytrie_init()
 {
-  return 0x0;
+	struct atrie *at = (struct atrie *)malloc(sizeof(struct atrie));
+	at->wc = 0;
+	at->root = (struct atrie_node *)calloc(1, sizeof(struct atrie_node));
+	return at;
 }
 
-/**
- * De-allocate a trie by freeing the memory occupied by this trie.
- *
- * @param trie which should be freed
- */
+internal void
+_arraytrie_free(struct atrie_node *n)
+{
+	for (int32 i = 0; i < ALPHASIZE; ++i) {
+		if (n->next[i]) {
+			_arraytrie_free(n->next[i]);
+		}
+	}
+	if (n->s) {
+		free(n->s);
+	}
+	free(n);
+}
+
 void
-arraytrie_free(ArrayTrie* trie)
+arraytrie_free(struct atrie *at)
 {
-  return;
+	_arraytrie_free(at->root);
+	free(at);
 }
 
-/**
- * Search whether a string is contained in this trie.
- *
- * @param trie
- * @param string
- * @return true if the string is contained within this trie, false otherwise
- */
 bool
-arraytrie_search(ArrayTrie* trie, const char* string)
+arraytrie_search(struct atrie *at, const char *s)
 {
-  return false;
+	int32 m = strlen(s), s_i = 0;
+	struct atrie_node *n = at->root;
+	while (!n->s) {
+		s_i += n->skip;
+		n = n->next[(int8)s[s_i]];
+		if (s_i > m || !n) {
+			return false;
+		}
+		++s_i;
+	}
+	return (strcmp(n->s, s) == 0);
 }
 
-/**
- * Add a string to this trie.
- *
- * @param trie
- * @param string
- * @return true if the trie was changed by this operation, false if it was already present
- */
 bool
-arraytrie_add(ArrayTrie* trie, const char* string)
+arraytrie_add(struct atrie *at, const char *s)
 {
-  return false;
+	int32 m = strlen(s), s_i = 0;
+	struct atrie_node **n = &at->root;
+	while (s[s_i]) {
+		if (!*n) {
+			*n = (struct atrie_node *)calloc(1,
+				sizeof(struct atrie_node));
+	    		(*n)->s = (char *)malloc(m + 1);
+	    		strcpy((*n)->s, s);
+	    		++at->wc;
+	    		return true;
+		}
+		s_i += (*n)->skip;
+	  	if (!s[s_i]) {
+			return false;
+		}
+	  	if ((*n)->s) {
+			int32 s_i_start = s_i;
+			while (s[s_i] == (*n)->s[s_i]
+			       && s[s_i] && (*n)->s[s_i])  {
+				++s_i;
+			}
+			if (!s[s_i] && !(*n)->s[s_i]) {
+				return false;
+			}
+			int32 diff = s_i - s_i_start;
+			struct atrie_node *n_new = (struct atrie_node *)calloc(
+			    1, sizeof(struct atrie_node));
+			n_new->skip = diff;
+			n_new->next[(int8)((*n)->s[s_i])] = *n;
+			*n = n_new;
+	  	}
+	  	n = &(*n)->next[(int8)s[s_i]];
+	  	++s_i;
+	}
+	return false;
 }
 
-/**
- * Remove a string from this trie.
- *
- * Note: strings added to this trie are considered to be "owned" by the caller.
- * Removing the string from the trie should not free the string's memory.
- *
- * @param trie
- * @param string
- * @return true if the string was present and has been removed, false if it was not present
- */
+internal bool
+_arraytrie_remove(struct atrie_node **n, const char *s, int32 l, int32 s_i,
+		  bool *is_success)
+{
+	if (s_i > l + 1 || !(*n)) {
+		return false;
+	}
+
+	if ((*n)->s) {
+		if (strcmp((*n)->s, s) == 0) {
+			free((*n)->s);
+			free(*n);
+			*n = 0;
+			*is_success = true;
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		s_i += (*n)->skip;
+		bool is_rm = _arraytrie_remove(&(*n)->next[(int8)s[s_i]],
+						s, l, s_i + 1, is_success);
+
+		// TODO (Elias): join nodes / rebalancing
+		bool is_zero_buf = true;
+		for (uint8 i = 0; i < ALPHASIZE && is_zero_buf; ++i) {
+			is_zero_buf = (*n)->next[i] == 0x0;
+		}
+		if (is_zero_buf) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool
-arraytrie_remove(ArrayTrie* trie, const char* string)
+arraytrie_remove(struct atrie *at, const char* s)
 {
-  return false;
+	bool is_success = false;
+	_arraytrie_remove(&at->root, s, strlen(s), 0, &is_success);
+	if (is_success) {
+		--at->wc;
+	}
+	return is_success;
 }
 
-/**
- * Returns the number of strings in this trie.
- *
- * @param trie
- * @return the number of strings in this trie
- */
 size_t
-arraytrie_size(ArrayTrie* trie)
+arraytrie_size(struct atrie *trie)
 {
-  return -1;
+	return trie->wc;
 }
-

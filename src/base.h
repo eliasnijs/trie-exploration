@@ -1,3 +1,5 @@
+#ifndef BASELAYER
+
 //////////////////////////////////////////////////////////////////////////////////////
 //// NOTE(Elias): Types
 
@@ -28,19 +30,25 @@ typedef int64    bool64;
 
 #define Stmnt(S) do{S}while(0)
 
-#define ArrayLength(a) (sizeof(a)/sizeof(*(a)))
+#define ArrayLength(a)  (sizeof(a)/sizeof(*(a)))
 #define Min(a,b)        (((a)<(b))?(a):(b))
 #define Max(a,b)        (((a)>(b))?(a):(b))
 #define Clamp(a,x,b)    (((x)<(a))?(a):((b)<(x))?(b):(x))
 #define ClampBot(a,b)   (Max((a),(b)))
 #define ClampTop(a,b)   (Min((a),(b)))
 #define Abs(a)          (((a)<0)?(-(a)):(a))
-
-#define OffsetOf(t, e) ((size_t)&(((t *)0)->e))
+#define Swap(x, y, T)   Stmnt(T SWAP = x; x = y; y = SWAP;)
+#define OffsetOf(t, e)  ((size_t)&(((t *)0)->e))
 
 #define AssertBreak() (*(int *)0 = 0)
 #if ENABLE_ASSERT
-#define Assert(c) Stmnt( if (!(c)){ AssertBreak(); })
+#define Assert(c) Stmnt(\
+                        if (!(c)){\
+                          fprintf(stderr, "[ASSERTION FAILED]: %s %d, ",__FILE__, __LINE__);\
+                          fprintf(stderr, "`"#c"`\n");\
+                          AssertBreak();\
+                        }\
+                    )
 #else
 #define Assert(c)
 #endif
@@ -51,7 +59,7 @@ typedef int64    bool64;
                                         fprintf(stderr, "%s %d: ",__FILE__, __LINE__);\
                                         fprintf(stderr, format,##__VA_ARGS__);\
                                         fprintf(stderr, "\n");\
-                                        )
+                                          )
 #define DebugLogInt(a)              printf(#a" = %ld\n", (int64)a)
 #define DebugLogUint(a)             printf(#a" = %lu\n", (uint64)a)
 #define DebugLogReal(a)             printf(#a" = %f\n", (real64)a)
@@ -59,6 +67,7 @@ typedef int64    bool64;
 #define DebugLogString(s)           printf(#s" = %s\n", (char *)s)
 #define DebugLogBool(b)             printf(#b" = %s\n", (b)?"true":"false")
 #define DebugLogPtr(p)              printf(#p" = %p\n", p)
+#define DebugLogLine(p)             printf("────────────────────────────────\n")
 #else
 #define DebugLog(format, ...)
 #define DebugLogError(format, ...)
@@ -69,22 +78,8 @@ typedef int64    bool64;
 #define DebugLogString(s)
 #define DebugLogBool(b)
 #define DebugLogPtr(p)
+#define DebugLogLine(p)
 #endif
-
-#define DLLPushBack_NP(f,l,n,next,prev) (((f)==0)?\
-                                         ((f)=(l)=(n),(n)->next=(n)->prev=0):\
-                                         ((n)->prev=(l),(l)->next=(n),(l)=(n),(n)->next=0))
-#define DLLRemove_NP(f,l,n,next,prev) (((f)==(n)?\
-                                       ((f)=(f)->next, (f)->prev=0)\
-                                       (l)==(n)?\
-                                       ((l)=(l)->prev,(l)->next=0):\
-                                       ((n)->next->prev=(n)->prev,\
-                                        (n)->prev->next=(n)->next)))
-#define DLLPushBack(f,l,n)  DLLPushBack_NP(f,l,n,next,prev)
-#define DLLPushFront(f,l,n) DLLPushBack_NP(1,f,n,prev,next)
-#define DLLRemove(f,l,n)    DLLRemove_NP(f,l,n,next,prev)
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 //// NOTE(Elias): Some Constants
@@ -116,3 +111,5 @@ global_variable real64 e64          = 2.71828182846;
 global_variable real64 gold_big64   = 1.61803398875;
 global_variable real64 gold_small64 = 0.61803398875;
 
+#define BASELAYER
+#endif
