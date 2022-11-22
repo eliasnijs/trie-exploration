@@ -3,7 +3,7 @@ project(AD3-project-2022-2023 C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_compile_options(-Wall -Wextra -Werror -g -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -DENABLE_DEBUGLOG)
+add_compile_options(-Wall -Wextra -Werror -g -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -D_POSIX_C_SOURCE=199309L )
 
 
 include_directories(include)
