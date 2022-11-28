@@ -1,5 +1,10 @@
 /* depends on:
- * stdio.h, stdlib.h, base.h, stdint.h */
+ * stdio.h, stdlib.h, base.c, stdint.h */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include "base.c"
 
 /* Implementation of an Array Trie Datastructure, more specifically a Patricia
  * Trie. The rationale and specifics of this structure can be found in the

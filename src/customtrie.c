@@ -1,5 +1,11 @@
 /* depends on:
- * stdio.h, stdlib.h, base.h, stdint.h */
+ * stdio.h, stdlib.h, base.c, stdint.h, utils.c */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include "base.c"
+#include "utils.c"
 
 /* enumerations, structs, unions */
 struct ctrie_node {

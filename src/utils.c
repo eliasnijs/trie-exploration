@@ -1,3 +1,5 @@
+#ifndef TRIES_UTILS_H
+
 /* depends on:
  * stdio.h, stdlib.h, base.h, time.h */
 
@@ -63,3 +65,6 @@ llist_to_file(FILE *f, const struct sllist *elem,
 		elem = elem->next;
 	}
 }
+
+#define TRIES_UTILS_H
+#endif
