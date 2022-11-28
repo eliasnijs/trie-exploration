@@ -1,5 +1,5 @@
 /* depends on:
- * stdio.h, stdlib.h, base.c, stdint.h, utils.c */
+ * stdio.h, stdlib.h, stdint.h, string.h, utils.c, base.c */
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,9 +1,11 @@
 /* depends on:
- * stdio.h, stdlib.h, base.c, stdint.h */
+ * stdio.h, stdlib.h, base.c, stdint.h, string.h */
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "base.c"
 
 /* Implementation of an Array Trie Datastructure, more specifically a Patricia
@@ -14,6 +16,9 @@
  * coded in alphanumeric. Journal of the ACM (JACM), 15(4), 514-534.
  *
  * */
+
+/* macros and typedefs */
+#define ARRAYTRIE_ALPHASIZE 0b1111111
 
 /* enumerations, structs, unions */
 struct atrie_node {

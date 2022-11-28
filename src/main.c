@@ -1,5 +1,3 @@
-#define ARRAYTRIE_ALPHASIZE ALPHASIZE
-
 #define ALPHASIZE 0b1111111
 
 #include <stdio.h>
