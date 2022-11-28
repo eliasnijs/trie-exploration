@@ -1,0 +1,38 @@
+.de IMG
+.    KS
+.    ps -2
+.    PSPIC -C "\\$2" 
+.    ad c
+.    ps +2
+.    KE
+.    ad b
+..
+
+.de LINK
+.    KS
+.    LP
+.    I "\\$1"
+.    KE
+..
+
+.de CODE
+.    KS
+.    LP
+.    ad c
+.    CW "\\$1"
+.    KE
+.    ad b
+..
+
+.de PSEUDOCODE_BEGIN
+.   TS
+    center box tab (:);
+    cb
+    l
+    "\\$1"
+     _
+..
+
+.de PSEUDOCODE_END
+.    TE
+..
