@@ -9,12 +9,12 @@
 struct benchmark_sll {
 	struct benchmark_sll *next;
 	union {
+		uint64 results[3];
 		struct {
 			uint64 ternary_ns;
 			uint64 array_ns;
 			uint64 custom_ns;
 		};
-		uint64 results[3];
 	};
 };
 
@@ -28,7 +28,7 @@ internal void
 benchmark_sll_print(FILE *f, const void *ptr)
 {
 	struct benchmark_sll *b = (struct benchmark_sll *)ptr;
-	fprintf(f, "%.2fs, %.2fs, %.2fs\n", b->ternary_ns / 10e9,
+	fprintf(f, "%8.4fs, %8.4fs, %8.4fs\n", b->ternary_ns / 10e9,
 		b->array_ns / 10e9, b->custom_ns / 10e9);
 }
 
@@ -46,10 +46,12 @@ benchmark_sll_die(struct benchmark_sll *b)
 internal struct benchmark_sll *
 benchmark_run(struct dataset *ds)
 {
-	struct trie tries[3];
-	tries[0] = TernaryTrie;
-	tries[1] = ArrayTrie;
-	tries[2] = CustomTrie;
+	struct trie tries[] = {
+		TernaryTrie,
+		TernaryTrie,
+		ArrayTrie,
+		CustomTrie,
+	};
 	struct benchmark_sll *b_start;
 	struct benchmark_sll **b_last = &b_start;
 	*b_last = (struct benchmark_sll *)calloc(

@@ -14,7 +14,7 @@ struct dataset {
 };
 
 /* function definitions */
-internal void dataset_file_load(char *path, struct dataset *ds);
+internal int32 dataset_file_load(char *path, struct dataset *ds);
 internal void dataset_die(struct dataset *ds);
 internal void dataset_generate(int32 l_lb, int32 l_ub, int32 wordcount,
 			       struct dataset *ds);
@@ -27,7 +27,7 @@ dataset_die(struct dataset *ds)
 	free(ds->words);
 }
 
-internal void
+internal int32
 dataset_file_load(char *path, struct dataset *ds)
 {
 	/* TODO(Elias): At the moment, we go through the entire dataset twice.
@@ -35,6 +35,10 @@ dataset_file_load(char *path, struct dataset *ds)
 	 * pointers to the words. There has got to be a better way to do this.
 	 * */
 	FILE *f = fopen(path, "r");
+	if (!f) {
+		DebugLogError("failed to read file at: %s", path);
+		return 1;
+	}
 	int32 flen = filelen(f);
 	ds->backbuffer = (char *)calloc(flen, sizeof(char));
 	fread(ds->backbuffer, sizeof(char), flen, f);
@@ -55,6 +59,7 @@ dataset_file_load(char *path, struct dataset *ds)
 		*c = '\0';
 		++c;
 	}
+	return 0;
 }
 
 /* Generate strings for testing trie implementations. Strings have 3 factors:

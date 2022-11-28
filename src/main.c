@@ -34,24 +34,27 @@ main_benchmark()
 {
 	struct dataset ds;
 	/* dataset_generate(4, 12, 21000, &ds); */
-	dataset_file_load("resources/geschud_klein.g6", &ds);
-
+	if (dataset_file_load("resources/geschud_klein.g6", &ds)) {
+		return 1;
+	}
 	struct benchmark_sll *b_start = benchmark_run(&ds);
-
 	llist_to_file(stdout, (struct sllist *)b_start, benchmark_sll_print);
 	FILE *f = fopen("data/benchmarks.txt", "w");
 	llist_to_file(f, (struct sllist *)b_start, benchmark_sll_print);
 	fclose(f);
-
 	dataset_die(&ds);
 	benchmark_sll_die(b_start);
-
 	return 0;
 }
 
 int32
 main(int32 argc, char *argv[])
 {
-	main_benchmark();
+	if (main_benchmark()) {
+		return 1;
+	}
 	return 0;
 }
+
+
+
