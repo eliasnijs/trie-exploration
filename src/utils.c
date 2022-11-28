@@ -12,9 +12,8 @@ struct sllist {
 };
 
 /* function definitions */
-#if D_POSIX_C_SOURCE == 199309L
-internal uint64 nanos();
-#endif
+internal uint64 nanos(); /* IMPORTANT: only valid if D_POSIX_C_SOURCE is
+			    199309L */
 internal int8 getbit(const char *w, size_t size);
 internal uint32 filelen(FILE *f);
 internal void shuffle_ptr(void **buffer, uint32 count);
@@ -29,6 +28,12 @@ nanos()
 	struct timespec t;
   	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
   	return((uint64)t.tv_sec*10e9 + (uint64)t.tv_nsec);
+}
+#else
+internal uint64
+nanos()
+{
+	return 0;
 }
 #endif
 
