@@ -18,9 +18,9 @@
 #define TESTUTILS_ENABLE_TUI 0
 #include "testutils.c"
 
-#include "trie_ternary.c"
-#include "trie_array.c"
-#include "trie_custom.c"
+#include "ternarytrie.c"
+#include "arraytrie.c"
+#include "customtrie.c"
 #include "trie.c"
 
 #include "tests_tst.c"
