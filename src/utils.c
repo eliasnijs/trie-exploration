@@ -12,7 +12,9 @@ struct sllist {
 };
 
 /* function definitions */
+#if D_POSIX_C_SOURCE == 199309L
 internal uint64 nanos();
+#endif
 internal int8 getbit(const char *w, size_t size);
 internal uint32 filelen(FILE *f);
 internal void shuffle_ptr(void **buffer, uint32 count);
@@ -20,6 +22,7 @@ internal void llist_to_file(FILE *f, const struct sllist *elem,
 			    printelem_fptr printelem_fptr);
 
 /* function implementations */
+#if D_POSIX_C_SOURCE == 199309L
 internal uint64
 nanos()
 {
@@ -27,6 +30,7 @@ nanos()
   	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
   	return((uint64)t.tv_sec*10e9 + (uint64)t.tv_nsec);
 }
+#endif
 
 internal int8
 getbit(const char *w, size_t i)
