@@ -5,14 +5,15 @@ tests_ternarytrie_basic(TestUtilsState *testutilsstate)
   	testutilsstate->cleanupargs = (void *)tst;
   	testutilsstate->cleanup     = (void (*)(void *))ternarytrie_free;
 
-  	TestUtils_Assert(ternarytrie_add(tst, "IS"))
-  	TestUtils_Assert(ternarytrie_add(tst, "AL"))
-  	TestUtils_Assert(ternarytrie_add(tst, "ZO"))
+  	TestUtils_Assert(ternarytrie_add(tst, "IS"));
+  	TestUtils_Assert(ternarytrie_add(tst, "AL"));
+  	TestUtils_Assert(ternarytrie_add(tst, "ZO"));
   	TestUtils_Assert(ternarytrie_size(tst) == 3 );
 
-  	TestUtils_Assert(ternarytrie_search(tst, "IS"))
-  	TestUtils_Assert(ternarytrie_search(tst, "AL"))
-  	TestUtils_Assert(ternarytrie_search(tst, "ZO"))
+
+  	TestUtils_Assert(ternarytrie_search(tst, "IS"));
+  	TestUtils_Assert(ternarytrie_search(tst, "AL"));
+  	TestUtils_Assert(ternarytrie_search(tst, "ZO"));
 
   	TestUtils_Assert(ternarytrie_remove(tst, "ZO"));
   	TestUtils_Assert(ternarytrie_search(tst, "IS"));

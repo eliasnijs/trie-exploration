@@ -19,7 +19,7 @@
 struct ttrie_node  {
 	union {
 		char *s;
-		bool8 is_end;
+		bool16 is_end;
 	};
 	char splitchar;
 	struct ttrie_node  *lo, *eq, *hi;

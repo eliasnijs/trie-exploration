@@ -94,7 +94,7 @@ internal int32
 main_tests()
 {
 	TestUtilsState ts = {0};
-	TestUtils_RunMultiple(&ts, tests_arraytrie);
+	TestUtils_RunMultiple(&ts, tests_ternarytrie);
 	return 0;
 }
 
