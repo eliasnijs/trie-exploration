@@ -1,7 +1,6 @@
 /* depends on:
  * stdio.h, stdlib.h, time.h
- * base.h, utils.h
- * ternarytrie.h, arraytrie.h, customtrie.h */
+ * base.h, utils.h, trie.h */
 
 /* macros and typedefs */
 
@@ -21,14 +20,15 @@ struct benchmark_sll {
 /* function definitions */
 internal void benchmark_sll_print(FILE *f, const void *ptr);
 internal void benchmark_sll_die(struct benchmark_sll *b);
-internal struct benchmark_sll * benchmark_run(struct dataset *ds);
-
+internal struct benchmark_sll * benchmark_run(struct dataset *ds,
+					      struct trie *tries, int32 tcnt,
+					      struct benchmark_sll *b);
 /* function implementations */
 internal void
 benchmark_sll_print(FILE *f, const void *ptr)
 {
 	struct benchmark_sll *b = (struct benchmark_sll *)ptr;
-	fprintf(f, "%8.4fs, %8.4fs, %8.4fs\n", b->ternary_ns / 10e9,
+	fprintf(f, "%8.4f, %8.4f, %8.4f\n", b->ternary_ns / 10e9,
 		b->array_ns / 10e9, b->custom_ns / 10e9);
 }
 
@@ -44,34 +44,40 @@ benchmark_sll_die(struct benchmark_sll *b)
 }
 
 internal struct benchmark_sll *
-benchmark_run(struct dataset *ds)
+benchmark_add_run(struct dataset *ds, struct trie *tries, int32 tcnt,
+		  struct benchmark_sll *b)
 {
-	struct trie tries[] = {
-		TernaryTrie,
-		TernaryTrie,
-		ArrayTrie,
-		CustomTrie,
-	};
-	struct benchmark_sll *b_start;
-	struct benchmark_sll **b_last = &b_start;
-	*b_last = (struct benchmark_sll *)calloc(
-	    1, sizeof(struct benchmark_sll));
-	char **words = ds->words;
-	shuffle_ptr((void **)words, ds->wordcount);
-	for (int32 i_trie = 0; i_trie < ArrayLength(tries); ++i_trie) {
-		if (i_trie == 1) {
-			continue;
-		}
+	for (int32 i_trie = 0; i_trie < tcnt; ++i_trie) {
 		struct trie *trie = &tries[i_trie];
 		trie_init(trie);
 		uint64 start_t = nanos();
 		for (uint32 i = 0; i < ds->wordcount; ++i) {
-			trie_add(trie, words[i]);
+			trie_add(trie, ds->words[i]);
 		}
 		uint64 end_t = nanos();
-		(*b_last)->results[i_trie] = (real64)end_t - (real64)start_t;
+		b->results[i_trie] = (real64)end_t - (real64)start_t;
 		trie_free(trie);
 	}
-	b_last = &(*b_last)->next;
-	return b_start;
+	return b;
+}
+
+internal struct benchmark_sll *
+benchmark_afbrm_run(struct dataset *ds, struct trie *tries, int32 tcnt,
+		    struct benchmark_sll *b)
+{
+	for (int32 i_trie = 0; i_trie < tcnt; ++i_trie) {
+		struct trie *trie = &tries[i_trie];
+		trie_init(trie);
+		uint64 start_t = nanos();
+		for (uint32 i = 0; i < ds->wordcount; ++i) {
+			trie_add(trie, ds->words[i]);
+		}
+		for (uint32 i = 0; i < ds->wordcount; ++i) {
+			trie_remove(trie, ds->words[i]);
+		}
+		uint64 end_t = nanos();
+		b->results[i_trie] = (real64)end_t - (real64)start_t;
+		trie_free(trie);
+	}
+	return b;
 }

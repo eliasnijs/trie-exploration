@@ -1,7 +1,6 @@
 /* depends on:
  * stdio.h, stdlib.h, base.c, stdint.h, string.h */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

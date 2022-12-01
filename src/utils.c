@@ -12,8 +12,8 @@ struct sllist {
 };
 
 /* function definitions */
-internal uint64 nanos(); /* IMPORTANT: only valid if D_POSIX_C_SOURCE is
-			    199309L */
+internal uint64 nanos(); /* IMPORTANT: only valid if _POSIX_C_SOURCE is
+			    199309 */
 internal int8 getbit(const char *w, size_t size);
 internal uint32 filelen(FILE *f);
 internal void shuffle_ptr(void **buffer, uint32 count);
@@ -21,7 +21,7 @@ internal void llist_to_file(FILE *f, const struct sllist *elem,
 			    printelem_fptr printelem_fptr);
 
 /* function implementations */
-#if D_POSIX_C_SOURCE == 199309L
+#if _POSIX_C_SOURCE == 199309
 internal uint64
 nanos()
 {
@@ -33,6 +33,7 @@ nanos()
 internal uint64
 nanos()
 {
+	Assert(_POSIX_C_SOURCE == 199309);
 	return 0;
 }
 #endif

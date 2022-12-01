@@ -142,7 +142,6 @@ tests_ternarytrie_remove_more(TestUtilsState *testutilsstate) {
     	TestUtils_Assert(tst->wc == 4);
 
     	TestUtils_Assert(ternarytrie_remove(tst, one));
-
     	TestUtils_Assert(ternarytrie_remove(tst, two));
     	TestUtils_Assert(ternarytrie_search(tst, two) == false);
     	TestUtils_Assert(ternarytrie_remove(tst, twenty));
@@ -169,7 +168,35 @@ tests_ternarytrie_remove_not_present(TestUtilsState *testutilsstate) {
   	return 0;
 }
 
+internal int32
+tests_ternarytrie_print(TestUtilsState *testutilsstate) {
+	struct ttrie *tst = ternarytrie_init();
+  	TestUtils_Assert(tst);
+  	testutilsstate->cleanupargs = (void *)tst;
+  	testutilsstate->cleanup     = (void (*)(void *))ternarytrie_free;
+
+    	const char* one = "one";
+    	const char* two = "two";
+    	const char* twenty = "twenty";
+    	const char* twentytwo = "twentytwo";
+
+    	TestUtils_Assert(ternarytrie_add(tst, one));
+    	TestUtils_Assert(ternarytrie_add(tst, two));
+    	TestUtils_Assert(ternarytrie_add(tst, twenty));
+    	TestUtils_Assert(ternarytrie_add(tst, twentytwo));
+
+    	TestUtils_Assert(tst->wc == 4);
+
+	printf("\n");
+	ternarytrie_print(stdout, tst);
+
+  	ternarytrie_free(tst);
+  	return 0;
+}
+
+
 global_variable TestUtilsTest tests_ternarytrie[] = {
+	/* TestUtils_Make_Test(tests_ternarytrie_print), */
 	TestUtils_Make_Test(tests_ternarytrie_basic),
   	TestUtils_Make_Test(tests_ternarytrie_init),
   	TestUtils_Make_Test(tests_ternarytrie_add_one),
