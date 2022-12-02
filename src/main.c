@@ -21,25 +21,24 @@
 #include "customtrie.c"
 #include "trie.c"
 
-#include "tests_tst.c"
-#include "tests_arrt.c"
-#include "tests_ct.c"
-
 #include "dataset.c"
+
+#include "tests.c"
+
 #include "benchmark.c"
 
 internal int32
 main_benchmark()
 {
-	struct trie tries[] = {TernaryTrie, ArrayTrie};
+	struct trie tries[] = {TernaryTrieModel, ArrayTrieModel};
 	char *filepaths[] = {
 		"resources/geschud_piepklein.g6",
 		"resources/geschud_klein.g6",
 		"resources/geschud_middelmaat.g6",
 		"resources/geschud_groot.g6",
 		"resources/bonzai.g6",
-		"resources/geschud.g6",
-		"resources/globosum.g6",
+		/* "resources/geschud.g6", */
+		/* "resources/globosum.g6", */
 	};
 
 	printf("\n");
@@ -93,8 +92,9 @@ main_benchmark()
 internal int32
 main_tests()
 {
+	TestsTrieModel = ArrayTrieModel;
 	TestUtilsState ts = {0};
-	TestUtils_RunMultiple(&ts, tests_ternarytrie);
+	TestUtils_RunMultiple(&ts, tests_trie);
 	return 0;
 }
 
@@ -102,4 +102,10 @@ int32
 main(int32 argc, char *argv[])
 {
 	return main_tests();
+	return 0;
 }
+
+
+
+
+

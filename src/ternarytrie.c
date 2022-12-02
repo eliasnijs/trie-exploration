@@ -33,6 +33,9 @@ struct ttrie {
 /* function definitions */
 struct ttrie * ternarytrie_init();
 void ternarytrie_free(struct ttrie *tst);
+internal void _ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j,
+				 int32 w, bool32 enter);
+void ternarytrie_print(FILE *f, struct ttrie *tst);
 bool8 ternarytrie_add(struct ttrie *tst, const char* s);
 bool8 ternarytrie_search(struct ttrie *tst, const char* s);
 bool8 ternarytrie_remove(struct ttrie *tst, const char *s);
@@ -71,10 +74,9 @@ void ternarytrie_free(struct ttrie *tst)
 	free(tst);
 }
 
-#define CHAR_DISPLAY_WIDTH 3
-#define INBETWEEN_NODE_WIDTH 3
 internal void
-_ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j, int32 w, bool32 enter)
+_ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j, int32 w,
+		   bool32 enter)
 {
 	if (!n) {
 		return;
@@ -105,7 +107,7 @@ void
 ternarytrie_print(FILE *f, struct ttrie *tst)
 {
 	_ternarytrie_print(f, tst->root, 0, 0, false);
-	printf("\n");
+	fputs("\n", f);
 }
 
 bool8
