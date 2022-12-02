@@ -43,7 +43,7 @@ global_variable const struct trie TernaryTrieModel = {
 	0x0,
 	(trie_init_fptr)ternarytrie_init,
 	(trie_free_fptr)ternarytrie_free,
-	(trie_print_fptr)0x0,
+	(trie_print_fptr)ternarytrie_print,
 	{{
 		(trie_oper_fptr)ternarytrie_add,
 		(trie_oper_fptr)ternarytrie_search,
@@ -56,7 +56,7 @@ global_variable const struct trie ArrayTrieModel = {
 	0x0,
 	(trie_init_fptr)arraytrie_init,
 	(trie_free_fptr)arraytrie_free,
-	(trie_print_fptr)0x0,
+	(trie_print_fptr)arraytrie_print,
 	{{
 		(trie_oper_fptr)arraytrie_add,
 		(trie_oper_fptr)arraytrie_search,
@@ -95,7 +95,7 @@ internal void
 trie_print(struct trie *t, FILE *f)
 {
 	if (t->print) {
-		t->print(t->t, f);
+		t->print(f, t->t);
 	}
 }
 

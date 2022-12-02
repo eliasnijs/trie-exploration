@@ -21,8 +21,8 @@
 
 /* enumerations, structs, unions */
 struct atrie_node {
-	int16 m;
 	char *s;
+	int16 m;
 	size_t skip;
 	struct atrie_node *next[ARRAYTRIE_ALPHASIZE];
 };
@@ -152,7 +152,13 @@ arraytrie_add(struct atrie *at, const char *s)
 	    		++at->wc;
 	    		return true;
 		}
-		i_s += (*n)->skip;
+		if (i_s + (*n)->skip < m) {
+			i_s += (*n)->skip;
+		} else {
+			while ((*n)->s[i_s] == s[i_s]) {
+				++i_s;
+			}
+		}
 		if ((*n)->s) {
 			if (!strcmp((*n)->s, s)) {
 				return false;

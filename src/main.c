@@ -30,15 +30,17 @@
 internal int32
 main_benchmark()
 {
-	struct trie tries[] = {TernaryTrieModel, ArrayTrieModel};
+	struct trie tries[] = {
+		TernaryTrieModel,
+	};
 	char *filepaths[] = {
 		"resources/geschud_piepklein.g6",
 		"resources/geschud_klein.g6",
 		"resources/geschud_middelmaat.g6",
 		"resources/geschud_groot.g6",
 		"resources/bonzai.g6",
-		/* "resources/geschud.g6", */
-		/* "resources/globosum.g6", */
+		"resources/geschud.g6",
+		"resources/globosum.g6",
 	};
 
 	printf("\n");
@@ -56,11 +58,11 @@ main_benchmark()
 		benchmark_add_run(&ds, tries, ArrayLength(tries), *b_add_last);
 		b_add_last = &(*b_add_last)->next;
 
-		/* *b_afbrm_last = (struct benchmark_sll *)calloc( */
-		/*     1, sizeof(struct benchmark_sll)); */
-		/* benchmark_afbrm_run(&ds, tries, ArrayLength(tries), */
-		/* 		    *b_afbrm_last); */
-		/* b_afbrm_last = &(*b_afbrm_last)->next; */
+		*b_afbrm_last = (struct benchmark_sll *)calloc(
+		    1, sizeof(struct benchmark_sll));
+		benchmark_afbrm_run(&ds, tries, ArrayLength(tries),
+				    *b_afbrm_last);
+		b_afbrm_last = &(*b_afbrm_last)->next;
 
 		dataset_die(&ds);
 	}
@@ -92,7 +94,7 @@ main_benchmark()
 internal int32
 main_tests()
 {
-	TestsTrieModel = ArrayTrieModel;
+	TestsTrieModel = TernaryTrieModel;
 	TestUtilsState ts = {0};
 	TestUtils_RunMultiple(&ts, tests_trie);
 	return 0;
@@ -101,8 +103,8 @@ main_tests()
 int32
 main(int32 argc, char *argv[])
 {
+	/* return main_benchmark(); */
 	return main_tests();
-	return 0;
 }
 
 

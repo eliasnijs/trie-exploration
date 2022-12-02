@@ -134,7 +134,6 @@ ternarytrie_search(struct ttrie *tst, const char* s)
 bool8
 ternarytrie_add(struct ttrie *tst, const char* s)
 {
-	bool8 completed = false, already_present = true;
 	int32 s_i = 0, m = strlen(s);
 	struct ttrie_node **n = &tst->root;
 	while (s_i <= m) {
@@ -190,14 +189,14 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 		}
 		struct ttrie_node *t = *n;
 		if ((*n)->lo && (*n)->hi) {
-			*n = t->lo;
-			struct ttrie_node *l = (*n)->hi;
-			(*n)->hi = t->hi;
-			struct ttrie_node *iter = (*n)->hi;
-			while (iter->lo != 0) {
-				iter = iter->lo;
+			struct ttrie_node **iter = &(*n)->lo;
+			while ((*iter)->hi) {
+				iter = &(*iter)->hi;
 			}
-			iter->lo = l;
+			*n = *iter;
+			*iter = (*n)->lo;
+			(*n)->lo = t->lo;
+			(*n)->hi = t->hi;
 		} else {
 			*n = ((*n)->lo) ? t->lo : t->hi;
 		}
