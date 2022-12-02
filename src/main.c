@@ -7,6 +7,7 @@
 #include <time.h>
 #include <math.h>
 #include <ncurses.h>
+#include<unistd.h>
 
 #include "base.c"
 #include "ansii_esc_codes.c"
@@ -50,7 +51,7 @@ main_benchmark()
 
 	for (int32 i = 0; i < ArrayLength(filepaths); ++i) {
 		printf("> running benchmarks for '%s'\n", filepaths[i]);
-		struct dataset ds;
+		struct dataset ds = {0};
 		dataset_file_load(filepaths[i], &ds);
 
 		*b_add_last = (struct benchmark_sll *)calloc(
@@ -103,11 +104,7 @@ main_tests()
 int32
 main(int32 argc, char *argv[])
 {
-	/* return main_benchmark(); */
-	return main_tests();
+	main_tests();
+	/* main_benchmark(); */
+	return 0;
 }
-
-
-
-
-

@@ -67,8 +67,8 @@ typedef int64    bool64;
 #else
 #define DebugLog(format, ...)
 #define DebugLogError(format, ...)
-#define DebugLogint(a)
-#define DebugLoguint(a)
+#define DebugLogInt(a)
+#define DebugLogUint(a)
 #define DebugLogReal(a)
 #define DebugLogChar(s)
 #define DebugLogString(s)

@@ -17,10 +17,7 @@
 
 /* enumerations, structs, unions */
 struct ttrie_node  {
-	union {
-		char *s;
-		bool16 is_end;
-	};
+	char *s;
 	char splitchar;
 	struct ttrie_node  *lo, *eq, *hi;
 };
@@ -88,18 +85,25 @@ _ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j, int32 w,
 		fputs(" ", f);
 		++j;
 	}
-	if (n->is_end) {
-		fprintf(f, " -- '%sØ'", n->s);
+	if (enter == 0) {
+		fprintf(f, " ── ");
+	} else if (enter == 1) {
+		fprintf(f, "└L─ ");
+	} else {
+		fprintf(f, "└H─ ");
+	}
+	if (n->s) {
+		fprintf(f, "'[%sØ]'", n->s);
 	} else {
 		char c = n->splitchar;
 		if (c) {
-			fprintf(f, " -- '%c'", c);
+			fprintf(f, "'%c'", c);
 		} else {
-			fprintf(f, " -- '%s'", "Ø");
+			fprintf(f, "'%s'", "Ø");
 		}
-		_ternarytrie_print(f, n->eq, j + 7, w + 7, false);
-		_ternarytrie_print(f, n->hi, 0, w + 7, true);
-		_ternarytrie_print(f, n->lo, 0, w + 7, true);
+		_ternarytrie_print(f, n->eq, j + 7, w + 7, 0);
+		_ternarytrie_print(f, n->lo, 0, w + 7, 2);
+		_ternarytrie_print(f, n->hi, 0, w + 7, 1);
 	}
 }
 
@@ -116,7 +120,7 @@ ternarytrie_search(struct ttrie *tst, const char* s)
 	const char *c = s;
 	struct ttrie_node *n = tst->root;
 	while (n) {
-		if (n->is_end) {
+		if (n->s) {
 			return strcmp(n->s, s) == 0;
 		}
 		if (*c < n->splitchar) {
@@ -148,7 +152,7 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 			++tst->wc;
 			return true;
 		}
-		if ((*n)->is_end) {
+		if ((*n)->s) {
 			struct ttrie_node *n_end = *n;
 			*n = (struct ttrie_node *)calloc(
 			    1, sizeof(struct ttrie_node));
@@ -174,7 +178,7 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 	if (!(*n)) {
 		return;
 	}
-	if (!(*n)->is_end) {
+	if (!(*n)->s) {
 		if (*c < (*n)->splitchar) {
 			_ternarytrie_remove(&(*n)->lo, c, s, is_success);
 		} else if (*c > (*n)->splitchar) {
@@ -184,7 +188,7 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 		}
 	}
 	if (!(*n)->eq) {
-		if ((*n)->is_end && strcmp((*n)->s, s) != 0) {
+		if ((*n)->s && strcmp((*n)->s, s) != 0) {
 			return;
 		}
 		struct ttrie_node *t = *n;

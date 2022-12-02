@@ -20,7 +20,7 @@ debug_flags="${common_flags} -Wall -g ${debug_wflags} ${debug_dflags}"
 # -> Release Flags
 release_dflags="$common_dflags"
 release_wflags="$common_wflags"
-release_flags="${common_flags} -O3 -Wall ${release_wflags} ${release_dflags}"
+release_flags="${common_flags} -O3 -Wall  ${release_wflags} ${release_dflags}"
 
 # Linker
 libs="-lncurses -lm"

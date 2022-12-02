@@ -8,6 +8,8 @@
 #include "base.c"
 #include "utils.c"
 
+/* implement splay */
+
 /* enumerations, structs, unions */
 struct ctrie_node {
 	struct ctrie_node *l, *r;

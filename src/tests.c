@@ -353,55 +353,44 @@ tests_trie_afbyrm(TestUtilsState *testutilsstate)
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
 
 	struct dataset ds;
-	dataset_file_load("resources/words.txt", &ds);
+	dataset_file_load("resources/geschud_2.g6", &ds);
 	struct trie_and_dataset trie_ds = {&trie, &ds};
   	testutilsstate->cleanupargs = (void *)&trie_ds;
   	testutilsstate->cleanup     = (void (*)(void *))free_trie_and_dataset;
 
-	shuffle_ptr((void **)ds.words, ds.wordcount);
 	int32 count = ds.wordcount;
-	count = 10;
 	printf("checking add: \n");
 	for (uint32 i = 0; i < count; ++i) {
 		TestUtils_Assert(trie_add(&trie, ds.words[i]));
-		if (trie_size(&trie) != i + 1) {
-			DebugLogError("%20s %10d", ds.words[i], i);
-		}
+		TestUtils_Assert(trie_size(&trie) == i + 1);
 	}
-	trie_print(&trie,stdout);
-	DebugLogInt(trie_size(&trie));
-	DebugLogInt(ds.wordcount);
 	printf("checking search: \n");
 	for (uint32 i = 0; i < count; ++i) {
-		if (!trie_search(&trie, ds.words[i])) {
-			DebugLogError("%20s %10d", ds.words[i], i);
-		}
+		TestUtils_Assert(trie_search(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == count);
 	}
 	printf("checking second add: \n");
 	for (uint32 i = 0; i < count; ++i) {
-		if (trie_add(&trie, ds.words[i])) {
-			DebugLogError("%20s %10d", ds.words[i], i);
-		}
+		TestUtils_Assert(!trie_add(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == count);
 	}
-	/* printf("checking remove: \n"); */
-	/* for (uint32 i = 0; i < count; ++i) { */
-	/* 	if (!trie_remove(&trie, ds.words[i])) { */
-	/* 		DebugLogError("remove: %s", ds.words[i]); */
-	/* 	} */
-	/* } */
-	/* printf("checking search after remove: \n"); */
-	/* for (uint32 i = 0; i < count; ++i) { */
-	/* 	if (trie_search(&trie, ds.words[i])) { */
-	/* 		DebugLogError("second search: %s", ds.words[i]); */
-	/* 	} */
-	/* } */
+	printf("checking remove: \n");
+	for (uint32 i = 0; i < count; ++i) {
+		TestUtils_Assert(trie_remove(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == count - i - 1);
+	}
+	printf("checking search after remove: \n");
+	for (uint32 i = 0; i < count; ++i) {
+		TestUtils_Assert(!trie_search(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == 0);
+	}
 	dataset_die(&ds);
   	trie_free(&trie);
 	return 0;
 }
 
 global_variable TestUtilsTest tests_trie[] = {
-	TestUtils_Make_Test(tests_trie_print),
+	/* TestUtils_Make_Test(tests_trie_print), */
 	TestUtils_Make_Test(tests_trie_init),
 	TestUtils_Make_Test(tests_trie_add_one),
 	TestUtils_Make_Test(tests_trie_add_two),

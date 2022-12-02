@@ -60,9 +60,11 @@ shuffle_ptr(void **buffer, uint32 count)
 	srand(nanos()); /* TODO(Elias): set random seed based on the current
 			 * time, not sure if this is a legitimate way to
 			 * randomize. */
-	for (uint32 i1 = 0; i1 < count - 1; ++i1) {
-		int32 i2 = i1 + (rand() % (count - i1));
-		Swap(buffer[i1], buffer[i2], void*);
+	for (uint32 i1 = count - 1; i1 > 0; --i1) {
+		int32 i2 = rand() % (i1 + 1);
+		void *temp = buffer[i2];
+		buffer[i2] = buffer[i1];
+		buffer[i1] = temp;
 	}
 }
 
