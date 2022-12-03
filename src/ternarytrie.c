@@ -1,18 +1,21 @@
+
 /* depends on:
  * stdio.h, stdlib.h, base.c, stdint.h */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "base.c"
+#include "base/base.c"
 
 /* Implementation of the Ternary Trie Datastructure. The rationale and specifics
  * of this structure can be found in the following paper:
- *
  * Bentley, J. L., & Sedgewick, R. (1997, January). Fast algorithms for sorting
  * and searching strings. In Proceedings of the eighth annual ACM-SIAM
  * symposium on Discrete algorithms (pp. 360-369).
- *
+ * */
+
+/* TODO:
+ * - add custom allocator to ensure more coherent memory
  * */
 
 /* enumerations, structs, unions */

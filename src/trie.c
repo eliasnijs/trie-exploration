@@ -1,7 +1,11 @@
-/* depends on: stdint.h, trie_ternary.h, trie_array.h, trie_custom.h */
+
+/* depends on:
+ * stdint.h, trie_ternary.h, trie_array.h, trie_custom.h
+ * */
 
 /* Wrapper for different trie implementations. (This way we can avoid a lot of
- * code duplication in the tests and benchmarks.) */
+ * code duplication in the tests and benchmarks.)
+ * */
 
 /* macros and typedefs */
 typedef void * (* trie_init_fptr)();
@@ -39,6 +43,7 @@ internal bool8 trie_search(struct trie *t, const char *s);
 internal bool8 trie_remove(struct trie *t, const char *s);
 
 /* global variables */
+/* TODO(Elias): Is there a better way to do this? */
 global_variable const struct trie TernaryTrieModel = {
 	0x0,
 	(trie_init_fptr)ternarytrie_init,

@@ -1,8 +1,10 @@
 /* depends on:
- * stdio.h, stdlib.h, base.h */
+ * stdio.h, stdlib.h, base.h
+ * */
 
 /* Datasets, in the context of our program, are lists of multikey data. When
- * saved or loaded from file, these are expected to be seperated by enters. */
+ * saved or loaded from file, these are expected to be seperated by enters.
+ * */
 
 /* macros and typedefs */
 
@@ -30,10 +32,10 @@ dataset_die(struct dataset *ds)
 internal int32
 dataset_file_load(char *path, struct dataset *ds)
 {
-	/* TODO(Elias): At the moment, we go through the entire dataset twice.
-	 * The first time to get the wordcount and the second time to get the
-	 * pointers to the words. There has got to be a better way to do this.
-	 * */
+/* TODO(Elias): At the moment, we go through the entire dataset twice.
+ * The first time to get the wordcount and the second time to get the
+ * pointers to the words. There has got to be a better way to do this.
+ * */
 	FILE *f = fopen(path, "r");
 	if (!f) {
 		DebugLogError("failed to read file at: %s", path);
@@ -62,19 +64,13 @@ dataset_file_load(char *path, struct dataset *ds)
 	return 0;
 }
 
-/* Generate strings for testing trie implementations. Strings have 3 factors:
- *
- * 1. the length ~ according to a distribution
- * 2. chance of characters in alpabet
- * 3. the alphabet
- *
- * In our case though, they only have 2 since our alphabet is fixed. */
-
-/* TODO: implement sampling from a given distribution */
-
 internal void
 dataset_generate(int32 l_lb, int32 l_ub, int32 wordcount, struct dataset *ds)
 {
+/* TODO(Elias): This uses rand() at the moment. Expand this function with the
+ * capability to sample from given distritubtions.
+ * IMPORTANT(Elias): The alphabet size is standard ASCII
+ * */
 	Assert(l_lb < l_ub);
 	Assert(wordcount > 0);
 	srand(nanos());

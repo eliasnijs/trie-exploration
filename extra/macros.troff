@@ -1,7 +1,7 @@
 .de IMG
 .    KS
 .    ps -2
-.    PSPIC -C "\\$2" 
+.    PSPIC -C "\\$2"
 .    ad c
 .    ps +2
 .    KE

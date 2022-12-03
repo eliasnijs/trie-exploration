@@ -5,15 +5,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "base.c"
+#include "base/base.c"
 
 /* Implementation of an Array Trie Datastructure, more specifically a Patricia
  * Trie. The rationale and specifics of this structure can be found in the
  * following paper:
- *
  * Morrison, D. R. (1968). PATRICIA—practical algorithm to retrieve information
  * coded in alphanumeric. Journal of the ACM (JACM), 15(4), 514-534.
- *
  * */
 
 /* macros and typedefs */

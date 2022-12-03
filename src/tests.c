@@ -1,7 +1,7 @@
-/* Configuration */
+/* configuration */
 global_variable struct trie TestsTrieModel = {0};
 
-/* Helpers */
+/* helpers */
 struct trie_and_dataset {
 	struct trie *at;
 	struct dataset *ds;
@@ -14,7 +14,7 @@ free_trie_and_dataset(struct trie_and_dataset *args)
 	dataset_die(args->ds);
 }
 
-/* Tests */
+/* tests */
 internal int32
 tests_trie_init(TestUtilsState *testutilsstate)
 {
@@ -389,6 +389,7 @@ tests_trie_afbyrm(TestUtilsState *testutilsstate)
 	return 0;
 }
 
+/* tests-batch */
 global_variable TestUtilsTest tests_trie[] = {
 	/* TestUtils_Make_Test(tests_trie_print), */
 	TestUtils_Make_Test(tests_trie_init),

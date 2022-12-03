@@ -7,25 +7,18 @@
 #include <time.h>
 #include <math.h>
 #include <ncurses.h>
-#include<unistd.h>
-
-#include "base.c"
-#include "ansii_esc_codes.c"
-#include "utils.c"
-
+#include "base/base.c"
+#include "base/ansii_esc_codes.c"
+#include "base/utils.c"
 #define TESTUTILS_ENABLE_TERM_COLORS 0
 #define TESTUTILS_ENABLE_TUI 0
-#include "testutils.c"
-
+#include "base/testutils.c"
 #include "ternarytrie.c"
 #include "arraytrie.c"
 #include "customtrie.c"
 #include "trie.c"
-
 #include "dataset.c"
-
 #include "tests.c"
-
 #include "benchmark.c"
 
 internal int32
