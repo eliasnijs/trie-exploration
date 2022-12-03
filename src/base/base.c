@@ -36,6 +36,11 @@ typedef int64    bool64;
 #define Swap(x, y, T)   Stmnt(T SWAP = x; x = y; y = SWAP;)
 #define OffsetOf(t, e)  ((size_t)&(((t *)0)->e))
 
+#define Kilobytes(v)	((v)*1024LL)
+#define Megabytes(v)	(Kilobytes(v)*1024LL)
+#define Gigabytes(v)	(Megabytes(v)*1024LL)
+#define Terabytes(v)	(Gigabytes(v)*1024LL)
+
 #define AssertBreak() (*(int *)0 = 0)
 #if ENABLE_ASSERT
 #define Assert(c) Stmnt(\

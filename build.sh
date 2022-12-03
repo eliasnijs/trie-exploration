@@ -9,7 +9,7 @@ output="build/build"
 # Flags
 common_dflags="-D_POSIX_C_SOURCE=199309L"
 common_wflags="-Wno-unused-variable -Wno-unused-function -Wno-write-strings"
-common_flags="-std=c99"
+common_flags="-std=c99 -pipe"
 
 # -> Debug Flags
 debug_dflags="$common_dflags -DENABLE_ASSERT=1 -DENABLE_DEBUGLOG=1"
@@ -20,7 +20,8 @@ debug_flags="${common_flags} -Wall -g ${debug_wflags} ${debug_dflags}"
 # -> Release Flags
 release_dflags="$common_dflags"
 release_wflags="$common_wflags"
-release_flags="${common_flags} -O3 -Wall  ${release_wflags} ${release_dflags}"
+# release_flags="${common_flags} -O3 -Wall  ${release_wflags} ${release_dflags}"
+release_flags="${common_flags} -Ofast -march=native -Wall  ${release_wflags} ${release_dflags}"
 
 # Linker
 libs="-lncurses -lm"

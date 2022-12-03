@@ -15,7 +15,7 @@
  * */
 
 /* TODO:
- * - use custom allocator to ensure more coherent memory
+ * - add custom allocator to ensure more coherent memory
  * */
 
 /* enumerations, structs, unions */
@@ -150,7 +150,6 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 			if (!*n) {
 				return false;
 			}
-			(*n)->splitchar = s[s_i];
 			(*n)->s = (char *)calloc(m + 1, 1);
 			strcpy((*n)->s, s);
 			++tst->wc;
@@ -210,14 +209,10 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 			*iter = (*n)->lo;
 			(*n)->lo = t->lo;
 			(*n)->hi = t->hi;
-			if ((*n)->s) {
-				char *ns = (*n)->s;
-				(*n)->s = 0x0;
-				(*n)->splitchar = (*n)->splitchar;
-				(*n)->eq = (struct ttrie_node *)calloc(
-				    1, sizeof(struct ttrie_node));
-				(*n)->eq->s = ns;
-			}
+			if ((*n)->s)
+			 = (struct ttrie_node *)calloc(
+			    1, sizeof(struct ttrie_node));
+
 		} else {
 			*n = ((*n)->lo) ? t->lo : t->hi;
 		}

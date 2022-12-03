@@ -10,6 +10,8 @@
 #include "base/base.c"
 #include "base/ansii_esc_codes.c"
 #include "base/utils.c"
+#include "base/m_arena.c"
+#include "base/m_pool.c"
 #define TESTUTILS_ENABLE_TERM_COLORS 0
 #define TESTUTILS_ENABLE_TUI 0
 #include "base/testutils.c"

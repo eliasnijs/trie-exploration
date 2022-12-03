@@ -132,6 +132,55 @@ tests_trie_add_two_2(TestUtilsState *testutilsstate)
 }
 
 internal int32
+tests_trie_add_five_remove_one(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init(&trie);
+	TestUtils_Assert(trie.t != 0);
+	testutilsstate->cleanupargs = (void *)&trie;
+	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	char *strings[] = { "4", "1", "3", "2", "7" };
+	for (int32 i = 0; i < ArrayLength(strings); ++i) {
+		TestUtils_Assert(trie_add(&trie, strings[i]));
+		for (int32 j = 0; j <= i; ++j) {
+			TestUtils_Assert(trie_search(&trie, strings[j]));
+		}
+	}
+	TestUtils_Assert(trie_remove(&trie, strings[0]));
+	for (int32 j = 1; j < ArrayLength(strings); ++j) {
+		TestUtils_Assert(trie_search(&trie, strings[j]));
+	}
+
+	trie_free(&trie);
+	return 0;
+}
+
+internal int32
+tests_trie_add_three_remove_one(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init(&trie);
+	TestUtils_Assert(trie.t != 0);
+	testutilsstate->cleanupargs = (void *)&trie;
+	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	char *strings[] = { "04", "01", "07" };
+	for (int32 i = 0; i < ArrayLength(strings); ++i) {
+		TestUtils_Assert(trie_add(&trie, strings[i]));
+		for (int32 j = 0; j <= i; ++j) {
+			TestUtils_Assert(trie_search(&trie, strings[j]));
+		}
+	}
+	TestUtils_Assert(trie_remove(&trie, strings[0]));
+	for (int32 j = 1; j < ArrayLength(strings); ++j) {
+		TestUtils_Assert(trie_search(&trie, strings[j]));
+	}
+	trie_free(&trie);
+	return 0;
+}
+
+internal int32
 tests_trie_add_already_present(TestUtilsState *testutilsstate)
 {
 	struct trie trie = TestsTrieModel;
@@ -364,30 +413,42 @@ tests_trie_afbyrm(TestUtilsState *testutilsstate)
 		TestUtils_Assert(trie_add(&trie, ds.words[i]));
 		TestUtils_Assert(trie_size(&trie) == i + 1);
 	}
-	printf("checking search: \n");
-	for (uint32 i = 0; i < count; ++i) {
-		TestUtils_Assert(trie_search(&trie, ds.words[i]));
-		TestUtils_Assert(trie_size(&trie) == count);
-	}
-	printf("checking second add: \n");
+	TestUtils_Assert(trie_size(&trie) == count);
+	printf("    checking search: \n");
 	for (uint32 i = 0; i < count; ++i) {
 		TestUtils_Assert(!trie_add(&trie, ds.words[i]));
 		TestUtils_Assert(trie_size(&trie) == count);
 	}
-	printf("checking remove: \n");
+	printf("    checking remove: \n");
 	for (uint32 i = 0; i < count; ++i) {
 		TestUtils_Assert(trie_remove(&trie, ds.words[i]));
 		TestUtils_Assert(trie_size(&trie) == count - i - 1);
 	}
-	printf("checking search after remove: \n");
+	printf("    checking search: \n");
 	for (uint32 i = 0; i < count; ++i) {
 		TestUtils_Assert(!trie_search(&trie, ds.words[i]));
 		TestUtils_Assert(trie_size(&trie) == 0);
 	}
+	printf("    checking double add: \n");
+	for (uint32 i = 0; i < count; ++i) {
+		TestUtils_Assert(trie_add(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == i + 1);
+	}
+	for (uint32 i = 0; i < count; ++i) {
+		TestUtils_Assert(!trie_add(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == count);
+	}
+	printf("    checking search: \n");
+	for (uint32 i = 0; i < count; ++i) {
+		TestUtils_Assert(trie_search(&trie, ds.words[i]));
+		TestUtils_Assert(trie_size(&trie) == count);
+	}
+	printf("    ");
 	dataset_die(&ds);
   	trie_free(&trie);
 	return 0;
 }
+
 
 /* tests-batch */
 global_variable TestUtilsTest tests_trie[] = {
@@ -402,8 +463,10 @@ global_variable TestUtilsTest tests_trie[] = {
 	TestUtils_Make_Test(tests_trie_add_already_present),
 	TestUtils_Make_Test(tests_trie_add_more),
 	TestUtils_Make_Test(tests_trie_remove_one),
+	TestUtils_Make_Test(tests_trie_add_five_remove_one),
 	TestUtils_Make_Test(tests_trie_remove_more),
 	TestUtils_Make_Test(tests_trie_remove_not_present),
+	TestUtils_Make_Test(tests_trie_add_three_remove_one),
 	TestUtils_Make_Test(tests_trie_add_more2),
 	TestUtils_Make_Test(tests_trie_add_more3),
 	TestUtils_Make_Test(tests_trie_afbyrm),
