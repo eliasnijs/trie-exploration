@@ -78,7 +78,7 @@ global_variable const struct trie ArrayTrieModel = {
 global_variable struct trie CustomTrieModel = {
 	0,
 	(trie_init_fptr)customtrie_init,
-	0x0,
+	(trie_init_fptr)customtrie_init,
 	(trie_free_fptr)customtrie_free,
 	(trie_print_fptr)customtrie_print,
 	{{

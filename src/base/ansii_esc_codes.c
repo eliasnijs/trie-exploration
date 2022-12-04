@@ -57,8 +57,8 @@
 #define ANSII_ESC_STRIKETHROUGH_RESET		ANSII_ESC "[29m"
 
 /* rgb color codes */
-#define ANSII_ESC_RGB_FG(r,g,b)		ESC "[38;2;" #r ";" #g ";" #b "m"
-#define ANSII_ESC_RGB_BG(r,g,b)		ESC "[48;2;" #r ";" #g ";" #b "m"
+#define ANSII_ESC_RGB_FG(r,g,b)		ANSII_ESC "[38;2;" #r ";" #g ";" #b "m"
+#define ANSII_ESC_RGB_BG(r,g,b)		ANSII_ESC "[48;2;" #r ";" #g ";" #b "m"
 
 /* screen modes */
 #define ANSII_ESC_CURSOR_HIDDEN			ANSII_ESC "[?25l"

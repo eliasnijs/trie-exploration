@@ -30,7 +30,7 @@ libs="-lncurses -lm"
 compiler="cc"
 
 # Command
-if [ "$1" = "release" ]; then
+if [ "$1" = "r" ]; then
   echo compiling release build...
   ${compiler} ${release_flags} -o ${output} ${input} ${libs}
   echo finished compiling...

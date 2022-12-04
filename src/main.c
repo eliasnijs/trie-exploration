@@ -13,7 +13,7 @@
 #include "base/utils.c"
 #include "base/m_arena.c"
 #include "base/m_pool.c"
-#define TESTUTILS_ENABLE_TERM_COLORS 0
+#define TESTUTILS_ENABLE_TERM_COLORS 1
 #define TESTUTILS_ENABLE_TUI 0
 #include "base/testutils.c"
 
@@ -30,6 +30,8 @@ main_benchmark()
 {
 	struct trie tries[] = {
 		TernaryTrieModel,
+		CustomTrieModel,
+		TernaryTrieModel,
 	};
 	char *filepaths[] = {
 		"resources/geschud_piepklein.g6",
@@ -42,9 +44,11 @@ main_benchmark()
 	};
 
 	printf("\n");
-	struct benchmark_sll *b_add_start = 0x0, *b_afbrm_start = 0x0;
+	struct benchmark_sll *b_add_start = 0x0, *b_afbrm_start = 0x0,
+			     *b_afbsfbrm_start = 0x0;
 	struct benchmark_sll **b_add_last = &b_add_start,
-			     **b_afbrm_last = &b_afbrm_start;
+			     **b_afbrm_last = &b_afbrm_start,
+			     **b_afbsfbrm_last = &b_afbsfbrm_start;
 
 	for (int32 i = 0; i < ArrayLength(filepaths); ++i) {
 		printf("> running benchmarks for '%s'\n", filepaths[i]);
@@ -63,6 +67,12 @@ main_benchmark()
 				    *b_afbrm_last, Megabytes(800));
 		b_afbrm_last = &(*b_afbrm_last)->next;
 
+		*b_afbsfbrm_last = (struct benchmark_sll *)calloc(
+		    1, sizeof(struct benchmark_sll));
+		benchmark_afbsfbrm_run(&ds, tries, ArrayLength(tries),
+				    *b_afbsfbrm_last, Megabytes(800));
+		b_afbsfbrm_last = &(*b_afbsfbrm_last)->next;
+
 		dataset_die(&ds);
 	}
 
@@ -75,6 +85,9 @@ main_benchmark()
 	printf("benchmark_add_followed_by_rm results: \n");
 	llist_to_file(stdout, (struct sllist *)b_afbrm_start,
 		      benchmark_sll_print);
+	printf("benchmark_add_followed_by_search_followed_by_rm results: \n");
+	llist_to_file(stdout, (struct sllist *)b_afbsfbrm_start,
+		      benchmark_sll_print);
 
 	/* save to files */
 	f = fopen("data/benchmarks_add.txt", "w");
@@ -82,6 +95,9 @@ main_benchmark()
 	fclose(f);
 	f = fopen("data/benchmarks_afbrm.txt", "w");
 	llist_to_file(f, (struct sllist *)b_afbrm_start, benchmark_sll_print);
+	fclose(f);
+	f = fopen("data/benchmarks_afbsfbrm.txt", "w");
+	llist_to_file(f, (struct sllist *)b_afbsfbrm_start, benchmark_sll_print);
 	fclose(f);
 
 	benchmark_sll_die(b_add_start);
@@ -96,7 +112,7 @@ main_tests()
 	TestUtilsState ts = {0};
 	/* TestsTrieModel = TernaryTrieModel; */
 	/* TestUtils_RunMultiple(&ts, tests_trie); */
-	TestsTrieModel = TernaryTrieModel;
+	TestsTrieModel = CustomTrieModel;
 	TestUtils_RunMultiple(&ts, tests_trie);
 	return 0;
 }

@@ -8,13 +8,15 @@
 
 /* Implementation of the Ternary Trie Datastructure. The rationale and specifics
  * of this structure can be found in the following paper:
+ *
  * Bentley, J. L., & Sedgewick, R. (1997, January). Fast algorithms for sorting
  * and searching strings. In Proceedings of the eighth annual ACM-SIAM
  * symposium on Discrete algorithms (pp. 360-369).
+ *
  * */
 
 /* TODO:
- * - use custom allocator to ensure more coherent memory
+* - add arena allocator for strings.
  * */
 
 /* macros */
@@ -51,7 +53,6 @@ internal void _ternarytrie_die(struct ttrie_node *n, struct m_pool *pool);
 
 
 /* function implementations */
-
 struct ttrie *
 ternarytrie_init_wmem(size_t backbufferlen)
 {
@@ -239,10 +240,10 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 		} else {
 			*n = ((*n)->lo) ? t->lo : t->hi;
 		}
-		/* free(t); */
 		if (t->s) {
                         free(t->s);
                 }
+		/* free(t); */
 		m_pool_free(pool, t);
 		*is_success = true;
 	}

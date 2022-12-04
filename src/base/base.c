@@ -55,11 +55,13 @@ typedef int64    bool64;
 #endif
 
 #if ENABLE_DEBUGLOG
-#define DebugLog(format, ...)       printf(format"\n", ##__VA_ARGS__);
+#define DebugLog(format, ...)       printf(format"\n"ANSII_ESC_RESET_ALL,\
+					   ##__VA_ARGS__);
 #define DebugLogError(format, ...)  Stmnt(\
                                         fprintf(stderr, "%s %d: ",__FILE__, __LINE__);\
                                         fprintf(stderr, format,##__VA_ARGS__);\
                                         fprintf(stderr, "\n");\
+                                        fprintf(stderr, ANSII_ESC_RESET_ALL);\
                                           )
 #define DebugLogInt(a)              printf(#a" = %ld\n", (int64)a)
 #define DebugLogUint(a)             printf(#a" = %lu\n", (uint64)a)
