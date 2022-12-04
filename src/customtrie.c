@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "base/base.c"
 #include "base/utils.c"
 #include "base/m_pool.c"
@@ -77,7 +78,7 @@ customtrie_init_wmem(size_t backbufferlen)
 struct ctrie *
 customtrie_init()
 {
-	return customtrie_init_wmem(TRIE_TERNARY_DEFAULT_POOL_SIZE);
+	return customtrie_init_wmem(TRIE_CUSTOM_DEFAULT_POOL_SIZE);
 }
 
 internal void
