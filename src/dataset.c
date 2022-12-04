@@ -11,6 +11,7 @@
 /* enumerations, structs, unions */
 struct dataset {
 	char *backbuffer;
+	size_t len;
 	char **words;
 	int32 wordcount;
 };
@@ -45,6 +46,7 @@ dataset_file_load(char *path, struct dataset *ds)
 	ds->backbuffer = (char *)calloc(flen, sizeof(char));
 	fread(ds->backbuffer, sizeof(char), flen, f);
 	fclose(f);
+	ds->len = flen;
 	ds->wordcount = 0;
 	for (int32 i = 0; i < flen; ++i) {
 		if (ds->backbuffer[i] == '\n') {

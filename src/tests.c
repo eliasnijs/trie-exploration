@@ -1,4 +1,6 @@
 /* configuration */
+
+/* TODO(Elias): Do this in a better way. */
 global_variable struct trie TestsTrieModel = {0};
 
 /* helpers */
@@ -471,13 +473,13 @@ internal int32
 tests_trie_afbyrm(TestUtilsState *testutilsstate)
 {
 	struct trie trie = TestsTrieModel;
-	trie_init(&trie);
+	trie_init_wmem(&trie, Megabytes(500));
 	TestUtils_Assert(trie.t != 0);
   	testutilsstate->cleanupargs = (void *)&trie;
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
 
 	struct dataset ds;
-	dataset_file_load("resources/geschud_piepklein.g6", &ds);
+	dataset_file_load("resources/geschud_2.g6", &ds);
 	struct trie_and_dataset trie_ds = {&trie, &ds};
   	testutilsstate->cleanupargs = (void *)&trie_ds;
   	testutilsstate->cleanup     = (void (*)(void *))free_trie_and_dataset;
@@ -517,7 +519,7 @@ tests_trie_afbyrm(TestUtilsState *testutilsstate)
 	TestUtils_Assert(trie_size(&trie) == count);
 	printf("    checking search: \n");
 	for (uint32 i = 0; i < count; ++i) {
-		DebugLog("%d/%d - %s", i, count, ds.words[i]);
+		/* DebugLog("%d/%d - %s", i, count, ds.words[i]); */
 		TestUtils_Assert(trie_search(&trie, ds.words[i]));
 		TestUtils_Assert(trie_size(&trie) == count);
 	}
@@ -531,24 +533,24 @@ tests_trie_afbyrm(TestUtilsState *testutilsstate)
 /* tests-batch */
 global_variable TestUtilsTest tests_trie[] = {
 	/* /1* TestUtils_Make_Test(tests_trie_print), *1/ */
-	TestUtils_Make_Test(tests_trie_init),
-	TestUtils_Make_Test(tests_trie_add_one),
-	TestUtils_Make_Test(tests_trie_add_two),
-	TestUtils_Make_Test(tests_trie_add_two_2),
-	TestUtils_Make_Test(tests_trie_add_three),
-	TestUtils_Make_Test(tests_trie_add_three_2),
-	TestUtils_Make_Test(tests_trie_search_not_present),
-	TestUtils_Make_Test(tests_trie_add_already_present),
-	TestUtils_Make_Test(tests_trie_add_more),
-	TestUtils_Make_Test(tests_trie_remove_one),
-	TestUtils_Make_Test(tests_trie_add_five_remove_one),
-	TestUtils_Make_Test(tests_trie_remove_more),
-	TestUtils_Make_Test(tests_trie_remove_not_present),
-	TestUtils_Make_Test(tests_trie_add_three_remove_one),
-	TestUtils_Make_Test(tests_trie_add_more2),
-	TestUtils_Make_Test(tests_trie_add_more3),
-	TestUtils_Make_Test(tests_trie_add_more4),
-	TestUtils_Make_Test(tests_trie_add_splay_test),
-	TestUtils_Make_Test(tests_trie_add_thesame),
+	/* TestUtils_Make_Test(tests_trie_init), */
+	/* TestUtils_Make_Test(tests_trie_add_one), */
+	/* TestUtils_Make_Test(tests_trie_add_two), */
+	/* TestUtils_Make_Test(tests_trie_add_two_2), */
+	/* TestUtils_Make_Test(tests_trie_add_three), */
+	/* TestUtils_Make_Test(tests_trie_add_three_2), */
+	/* TestUtils_Make_Test(tests_trie_search_not_present), */
+	/* TestUtils_Make_Test(tests_trie_add_already_present), */
+	/* TestUtils_Make_Test(tests_trie_add_more), */
+	/* TestUtils_Make_Test(tests_trie_remove_one), */
+	/* TestUtils_Make_Test(tests_trie_add_five_remove_one), */
+	/* TestUtils_Make_Test(tests_trie_remove_more), */
+	/* TestUtils_Make_Test(tests_trie_remove_not_present), */
+	/* TestUtils_Make_Test(tests_trie_add_three_remove_one), */
+	/* TestUtils_Make_Test(tests_trie_add_more2), */
+	/* TestUtils_Make_Test(tests_trie_add_more3), */
+	/* TestUtils_Make_Test(tests_trie_add_more4), */
+	/* TestUtils_Make_Test(tests_trie_add_splay_test), */
+	/* TestUtils_Make_Test(tests_trie_add_thesame), */
 	TestUtils_Make_Test(tests_trie_afbyrm),
 };

@@ -29,7 +29,7 @@ internal int32
 main_benchmark()
 {
 	struct trie tries[] = {
-		TernaryTrieModel, CustomTrieModel
+		TernaryTrieModel,
 	};
 	char *filepaths[] = {
 		"resources/geschud_piepklein.g6",
@@ -53,13 +53,14 @@ main_benchmark()
 
 		*b_add_last = (struct benchmark_sll *)calloc(
 		    1, sizeof(struct benchmark_sll));
-		benchmark_add_run(&ds, tries, ArrayLength(tries), *b_add_last);
+		benchmark_add_run(&ds, tries, ArrayLength(tries), *b_add_last,
+				  Megabytes(800));
 		b_add_last = &(*b_add_last)->next;
 
 		*b_afbrm_last = (struct benchmark_sll *)calloc(
 		    1, sizeof(struct benchmark_sll));
 		benchmark_afbrm_run(&ds, tries, ArrayLength(tries),
-				    *b_afbrm_last);
+				    *b_afbrm_last, Megabytes(800));
 		b_afbrm_last = &(*b_afbrm_last)->next;
 
 		dataset_die(&ds);
@@ -95,7 +96,7 @@ main_tests()
 	TestUtilsState ts = {0};
 	/* TestsTrieModel = TernaryTrieModel; */
 	/* TestUtils_RunMultiple(&ts, tests_trie); */
-	TestsTrieModel = CustomTrieModel;
+	TestsTrieModel = TernaryTrieModel;
 	TestUtils_RunMultiple(&ts, tests_trie);
 	return 0;
 }
@@ -103,7 +104,7 @@ main_tests()
 int32
 main(int32 argc, char *argv[])
 {
-	main_tests();
-	/* main_benchmark(); */
+	/* main_tests(); */
+	main_benchmark();
 	return 0;
 }

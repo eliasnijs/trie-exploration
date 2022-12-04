@@ -45,11 +45,11 @@ benchmark_sll_die(struct benchmark_sll *b)
 
 internal struct benchmark_sll *
 benchmark_add_run(struct dataset *ds, struct trie *tries, int32 tcnt,
-		  struct benchmark_sll *b)
+		  struct benchmark_sll *b, size_t memlen)
 {
 	for (int32 i_trie = 0; i_trie < tcnt; ++i_trie) {
 		struct trie *trie = &tries[i_trie];
-		trie_init(trie);
+		trie_init_wmem(trie, memlen);
 		uint64 start_t = nanos();
 		for (uint32 i = 0; i < ds->wordcount; ++i) {
 			trie_add(trie, ds->words[i]);
@@ -63,11 +63,11 @@ benchmark_add_run(struct dataset *ds, struct trie *tries, int32 tcnt,
 
 internal struct benchmark_sll *
 benchmark_afbrm_run(struct dataset *ds, struct trie *tries, int32 tcnt,
-		    struct benchmark_sll *b)
+		    struct benchmark_sll *b, size_t memlen)
 {
 	for (int32 i_trie = 0; i_trie < tcnt; ++i_trie) {
 		struct trie *trie = &tries[i_trie];
-		trie_init(trie);
+		trie_init_wmem(trie, memlen);
 		uint64 start_t = nanos();
 		for (uint32 i = 0; i < ds->wordcount; ++i) {
 			trie_add(trie, ds->words[i]);
