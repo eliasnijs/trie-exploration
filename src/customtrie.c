@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "base/base.c"
+#include "base/utils.c"
+#include "base/m_pool.c"
 
 /* Implementation of the Ternary Trie Datastructure. The rationale and specifics
  * of this structure can be found in the following paper:
