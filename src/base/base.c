@@ -41,6 +41,10 @@ typedef int64    bool64;
 #define Gigabytes(v)	(Megabytes(v)*1024LL)
 #define Terabytes(v)	(Gigabytes(v)*1024LL)
 
+#ifndef MEM_DEFAULT_ALIGNMENT
+#define MEM_DEFAULT_ALIGNMENT (2*sizeof(void *))
+#endif
+
 #define AssertBreak() (*(int *)0 = 0)
 #if ENABLE_ASSERT
 #define Assert(c) Stmnt(\

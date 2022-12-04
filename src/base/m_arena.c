@@ -11,9 +11,6 @@
  * */
 
 /* macros */
-#ifndef MEM_DEFAULT_ALIGNMENT
-#define MEM_DEFAULT_ALIGNMENT (2*sizeof(void *))
-#endif
 
 /* enumerations, structs, unions */
 struct m_arena {
