@@ -1,4 +1,3 @@
-
 /* depends on:
  * stdio.h, stdlib.h, base.c, stdint.h */
 
@@ -143,7 +142,7 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 {
 	int32 s_i = 0, m = strlen(s);
 	struct ttrie_node **n = &tst->root;
-	while (s_i < m) {
+	while (s_i <= m) {
 		if (!*n) {
 			*n = (struct ttrie_node *)calloc(1, sizeof(
 				struct ttrie_node));
@@ -178,8 +177,6 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 	return false;
 }
 
-global_variable struct ttrie *gl_tst = 0x0;
-
 internal void
 _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 		    bool8 *is_success)
@@ -213,7 +210,6 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 			if ((*n)->s) {
 				char *ns = (*n)->s;
 				(*n)->s = 0x0;
-				(*n)->splitchar = (*n)->splitchar;
 				(*n)->eq = (struct ttrie_node *)calloc(
 				    1, sizeof(struct ttrie_node));
 				(*n)->eq->s = ns;
@@ -232,7 +228,6 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 bool8
 ternarytrie_remove(struct ttrie *tst, const char *s)
 {
-	gl_tst = tst;
 	bool8 is_success = false;
 	_ternarytrie_remove(&tst->root, s, s, &is_success);
 	if (is_success) {

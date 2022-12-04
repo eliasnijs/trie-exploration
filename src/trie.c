@@ -74,7 +74,7 @@ global_variable struct trie CustomTrieModel = {
 	0,
 	(trie_init_fptr)customtrie_init,
 	(trie_free_fptr)customtrie_free,
-	(trie_print_fptr)0x0,
+	(trie_print_fptr)customtrie_print,
 	{{
 		(trie_oper_fptr)customtrie_add,
 		(trie_oper_fptr)customtrie_search,

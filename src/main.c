@@ -7,6 +7,7 @@
 #include <time.h>
 #include <math.h>
 #include <ncurses.h>
+
 #include "base/base.c"
 #include "base/ansii_esc_codes.c"
 #include "base/utils.c"
@@ -15,6 +16,7 @@
 #define TESTUTILS_ENABLE_TERM_COLORS 0
 #define TESTUTILS_ENABLE_TUI 0
 #include "base/testutils.c"
+
 #include "ternarytrie.c"
 #include "arraytrie.c"
 #include "customtrie.c"
@@ -27,7 +29,7 @@ internal int32
 main_benchmark()
 {
 	struct trie tries[] = {
-		TernaryTrieModel,
+		TernaryTrieModel, CustomTrieModel
 	};
 	char *filepaths[] = {
 		"resources/geschud_piepklein.g6",
@@ -90,8 +92,10 @@ main_benchmark()
 internal int32
 main_tests()
 {
-	TestsTrieModel = TernaryTrieModel;
 	TestUtilsState ts = {0};
+	/* TestsTrieModel = TernaryTrieModel; */
+	/* TestUtils_RunMultiple(&ts, tests_trie); */
+	TestsTrieModel = CustomTrieModel;
 	TestUtils_RunMultiple(&ts, tests_trie);
 	return 0;
 }
