@@ -102,3 +102,33 @@ benchmark_afbsfbrm_run(struct dataset *ds, struct trie *tries, int32 tcnt,
 	}
 	return b;
 }
+
+internal struct benchmark_sll *
+benchmark_afbsfbrm_splay_run(struct dataset *ds, struct trie *tries, int32 tcnt,
+			 struct benchmark_sll *b, size_t memlen)
+{
+	for (int32 i_trie = 0; i_trie < tcnt; ++i_trie) {
+		struct trie *trie = &tries[i_trie];
+		trie_init_wmem(trie, memlen);
+		uint64 start_t = nanos();
+		for (uint32 i = 0; i < ds->wordcount; ++i) {
+			trie_add(trie, ds->words[i]);
+		}
+		for (uint32 i = 0; i < ds->wordcount/2; ++i) {
+			trie_search(trie, ds->words[i]);
+		}
+		for (uint32 i = 0; i < ds->wordcount/4; ++i) {
+			trie_search(trie, ds->words[i]);
+		}
+		for (uint32 i = 0; i < ds->wordcount/8; ++i) {
+			trie_search(trie, ds->words[i]);
+		}
+		for (uint32 i = 0; i < ds->wordcount/16; ++i) {
+			trie_search(trie, ds->words[i]);
+		}
+		uint64 end_t = nanos();
+		b->results[i_trie] = (real64)end_t - (real64)start_t;
+		trie_free(trie);
+	}
+	return b;
+}

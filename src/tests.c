@@ -456,14 +456,14 @@ tests_trie_add_splay_test(TestUtilsState *testutilsstate)
 		{"3", "2", "1"},
 	};
 	for (int32 i = 0; i < 4; ++i) {
-		DebugLogLine();
+		/* DebugLogLine(); */
 		trie_init(&trie);
 		for (int32 j = 0; j < 3; ++j) {
 			char *str = strings[i][j];
 			TestUtils_Assert(trie_add(&trie, str));
 		}
 		/* trie_print(&trie, stdout); */
-		/* trie_search(&trie, strings[i][2]); */
+		trie_search(&trie, strings[i][2]);
 		/* trie_print(&trie, stdout); */
 		trie_free(&trie);
 	}
@@ -479,25 +479,22 @@ tests_trie_add_splay_test2(TestUtilsState *testutilsstate)
 
 	char *strings[] = {
 		"1", "2", "3", "4", "5", "6", "9", "12",
-		/* {"1", "3", "2"}, */
-		/* {"3", "1", "2"}, */
-		/* {"3", "2", "1"}, */
 	};
 	trie_init(&trie);
 	for (int32 j = 0; j < ArrayLength(strings); ++j) {
-		DebugLogLine();
+		/* DebugLogLine(); */
 		char *str = strings[j];
+		/* DebugLog("Adding %s", str); */
 		TestUtils_Assert(trie_add(&trie, str));
 		/* trie_print(&trie, stdout); */
 	}
-	DebugLogLine();
+	/* DebugLogLine(); */
 	/* DebugLog("Searching now"); */
-	/* for (int32 j = 0; j < ArrayLength(strings); ++j) { */
-	/* 	DebugLogLine(); */
-	/* 	TestUtils_Assert(trie_search(&trie, strings[j])); */
-	/* 	trie_print(&trie, stdout); */
-
-	/* } */
+	for (int32 j = 0; j < ArrayLength(strings); ++j) {
+		/* DebugLogLine(); */
+		TestUtils_Assert(trie_search(&trie, strings[j]));
+		/* trie_print(&trie, stdout); */
+	}
 	trie_free(&trie);
 	return 0;
 }
@@ -514,9 +511,9 @@ tests_trie_add_splay_test3(TestUtilsState *testutilsstate)
 	};
 	trie_init(&trie);
 	for (int32 j = 0; j < ArrayLength(strings); ++j) {
-		DebugLogLine();
+		/* DebugLogLine(); */
 		char *str = strings[j];
-		DebugLog("Adding %s", str);
+		/* DebugLog("Adding %s", str); */
 		TestUtils_Assert(trie_add(&trie, str));
 		/* trie_print(&trie, stdout); */
 	}
@@ -531,8 +528,8 @@ internal int32
 tests_trie_dataset(TestUtilsState *testutilsstate, char *path)
 {
 	struct trie trie = TestsTrieModel;
-	/* trie_init_wmem(&trie, megabytes(500)); */
-	trie_init(&trie);
+	trie_init_wmem(&trie, Megabytes(500));
+	/* trie_init(&trie); */
 	TestUtils_Assert(trie.t != 0);
   	testutilsstate->cleanupargs = (void *)&trie;
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
@@ -623,30 +620,30 @@ tests_trie_dataset_words(TestUtilsState *testutilsstate)
 /* tests-batch */
 global_variable TestUtilsTest tests_trie[] = {
 	/* TestUtils_Make_Test(tests_trie_print), */
-	/* TestUtils_Make_Test(tests_trie_init), */
-	/* TestUtils_Make_Test(tests_trie_add_one), */
-	/* TestUtils_Make_Test(tests_trie_add_two), */
-	/* TestUtils_Make_Test(tests_trie_add_two_2), */
-	/* TestUtils_Make_Test(tests_trie_add_three), */
-	/* TestUtils_Make_Test(tests_trie_add_three_2), */
-	/* TestUtils_Make_Test(tests_trie_search_not_present), */
-	/* TestUtils_Make_Test(tests_trie_add_already_present), */
-	/* TestUtils_Make_Test(tests_trie_add_more), */
-	/* TestUtils_Make_Test(tests_trie_remove_one), */
-	/* TestUtils_Make_Test(tests_trie_add_five_remove_one), */
-	/* TestUtils_Make_Test(tests_trie_remove_more), */
-	/* TestUtils_Make_Test(tests_trie_remove_not_present), */
-	/* TestUtils_Make_Test(tests_trie_add_three_remove_one), */
-	/* TestUtils_Make_Test(tests_trie_add_more2), */
-	/* TestUtils_Make_Test(tests_trie_add_more3), */
-	/* TestUtils_Make_Test(tests_trie_add_more4), */
-	/* TestUtils_Make_Test(tests_trie_add_splay_test), */
-	/* TestUtils_Make_Test(tests_trie_add_splay_test2), */
-	/* TestUtils_Make_Test(tests_trie_add_splay_test3), */
-	/* TestUtils_Make_Test(tests_trie_add_thesame), */
-	/* TestUtils_Make_Test(tests_trie_dataset_verysmall), */
-	/* TestUtils_Make_Test(tests_trie_dataset_small), */
-	/* TestUtils_Make_Test(tests_trie_dataset_middle), */
-	/* TestUtils_Make_Test(tests_trie_dataset_large), */
+	TestUtils_Make_Test(tests_trie_init),
+	TestUtils_Make_Test(tests_trie_add_one),
+	TestUtils_Make_Test(tests_trie_add_two),
+	TestUtils_Make_Test(tests_trie_add_two_2),
+	TestUtils_Make_Test(tests_trie_add_three),
+	TestUtils_Make_Test(tests_trie_add_three_2),
+	TestUtils_Make_Test(tests_trie_search_not_present),
+	TestUtils_Make_Test(tests_trie_add_already_present),
+	TestUtils_Make_Test(tests_trie_add_more),
+	TestUtils_Make_Test(tests_trie_remove_one),
+	TestUtils_Make_Test(tests_trie_add_five_remove_one),
+	TestUtils_Make_Test(tests_trie_remove_more),
+	TestUtils_Make_Test(tests_trie_remove_not_present),
+	TestUtils_Make_Test(tests_trie_add_three_remove_one),
+	TestUtils_Make_Test(tests_trie_add_more2),
+	TestUtils_Make_Test(tests_trie_add_more3),
+	TestUtils_Make_Test(tests_trie_add_more4),
+	TestUtils_Make_Test(tests_trie_add_splay_test),
+	TestUtils_Make_Test(tests_trie_add_splay_test2),
+	TestUtils_Make_Test(tests_trie_add_splay_test3),
+	TestUtils_Make_Test(tests_trie_add_thesame),
+	TestUtils_Make_Test(tests_trie_dataset_verysmall),
+	TestUtils_Make_Test(tests_trie_dataset_small),
+	TestUtils_Make_Test(tests_trie_dataset_middle),
+	TestUtils_Make_Test(tests_trie_dataset_large),
 	TestUtils_Make_Test(tests_trie_dataset_words),
 };

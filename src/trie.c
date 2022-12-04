@@ -1,4 +1,3 @@
-
 /* depends on:
  * stdint.h, trie_ternary.h, trie_array.h, trie_custom.h
  * */
@@ -78,7 +77,7 @@ global_variable const struct trie ArrayTrieModel = {
 global_variable struct trie CustomTrieModel = {
 	0,
 	(trie_init_fptr)customtrie_init,
-	(trie_init_fptr)customtrie_init,
+	(trie_init_fptr)customtrie_init_wmem,
 	(trie_free_fptr)customtrie_free,
 	(trie_print_fptr)customtrie_print,
 	{{
