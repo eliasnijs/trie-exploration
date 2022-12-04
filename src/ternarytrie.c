@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "base/base.c"
 #include "base/utils.c"
 #include "base/m_pool.c"
