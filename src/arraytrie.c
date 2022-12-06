@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "base/base.c"
+#include "base/utils.c"
 
 /* Implementation of an Array Trie Datastructure, more specifically a Patricia
  * Trie. The rationale and specifics of this structure can be found in the
