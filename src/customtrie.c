@@ -5,10 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
-#include "base/base.c"
-#include "base/utils.c"
-#include "base/m_pool.c"
+#include "utils/base.h"
+#include "utils/m_utils.c"
+#include "utils/m_pool.c"
 
 /* Implementation of the Ternary Trie Datastructure. The rationale and specifics
  * of this structure can be found in the following paper:
@@ -49,20 +51,20 @@ struct ctrie {
 struct ctrie * customtrie_init_wmem(size_t backbufferlen);
 struct ctrie * customtrie_init();
 void customtrie_free(struct ctrie *ct);
-internal struct ctrie_node * customtrie_splay_pop(struct ctrie *ct);
-internal void customtrie_splay_push(struct ctrie *ct, struct ctrie_node *n);
-internal void customtrie_splay_clear(struct ctrie *ct);
-internal void _customtrie_print(FILE *f, struct ctrie_node *n, int32 j,
-				 int32 w, bool32 enter);
 void customtrie_print(FILE *f, struct ctrie *ct);
-bool8 customtrie_add(struct ctrie *ct, const char* s);
-bool8 customtrie_search(struct ctrie *ct, const char* s);
-bool8 customtrie_remove(struct ctrie *ct, const char *s);
+bool customtrie_add(struct ctrie *ct, const char* s);
+bool customtrie_search(struct ctrie *ct, const char* s);
+bool customtrie_remove(struct ctrie *ct, const char *s);
 size_t customtrie_size(struct ctrie *ct);
 internal void _customtrie_remove(struct ctrie *ct, struct ctrie_node **n,
 				 const char *c, const char *s,
-				 bool8 *is_success);
+				 bool *is_success);
 internal void _customtrie_die(struct ctrie_node *n, struct m_pool *pool);
+internal void customtrie_splay_push(struct ctrie *ct, struct ctrie_node *n);
+internal struct ctrie_node * customtrie_splay_pop(struct ctrie *ct);
+internal void customtrie_splay_clear(struct ctrie *ct);
+internal void _customtrie_print(FILE *f, struct ctrie_node *n, int32 j,
+				 int32 w, bool32 enter);
 
 
 /* function implementations */
@@ -275,7 +277,7 @@ customtrie_print(FILE *f, struct ctrie *ct)
 	fputs("\n", f);
 }
 
-bool8
+bool
 customtrie_search(struct ctrie *ct, const char* s)
 {
 	const char *c = s;
@@ -303,7 +305,7 @@ customtrie_search(struct ctrie *ct, const char* s)
 	return 0;
 }
 
-bool8
+bool
 customtrie_add(struct ctrie *ct, const char* s)
 {
 	int32 s_i = 0, m = strlen(s);
@@ -358,7 +360,7 @@ customtrie_add(struct ctrie *ct, const char* s)
 
 internal void
 _customtrie_remove(struct ctrie *ct, struct ctrie_node **n, const char *c,
-		   const char *s, bool8 *is_success)
+		   const char *s, bool *is_success)
 {
 	if (!*n) {
 		return;
@@ -407,10 +409,10 @@ _customtrie_remove(struct ctrie *ct, struct ctrie_node **n, const char *c,
 	}
 }
 
-bool8
+bool
 customtrie_remove(struct ctrie *ct, const char *s)
 {
-	bool8 is_success = false;
+	bool is_success = false;
 	_customtrie_remove(ct, &ct->root, s, s, &is_success);
 	if (is_success) {
 		--ct->wc;

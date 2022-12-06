@@ -4,23 +4,24 @@
  * stdio.h, stdlib.h, ncurses.h, base.h
  * */
 
+/* The tui is very much a work in progress! */
+
 /* TODO(Elias):
  * 1. reduce amount of macros, less macros is better
- * 2. switch to frame based instead of event based approach
- * 3. add backbuffers for each test (allows for saving results
- *    and running multiple tests at once)
- * 4. someway to reload to reload functions binary (might have to
- *     do a drastic change in architecture)
- * 4. color
+ * 2. tui: switch to frame based instead of event based approach
+ * 3. tui: add backbuffers for each test (allows for saving results and
+ *	  running multiple tests at once)
+ * 4. tui: someway to reload to reload functions binary (might have to do a
+ *    drastic change in architecture)
+ * 4. tui: color
  * 5. better explanation of everything at the beginning of the file.
  * */
 
-/* Testutils are several functions for creating tests. I won't go into detail
- * here, look at an example to figure out how it works. There is also a tui
- * option. This option will let you render a nice interface in terminal. This
- * is espcially usefull when you have a large number of tests. The tui uses
- * vim keybinds to navigate and enter to run a test. (This is still in
- * development!)
+/* Several functions for creating tests. I won't go into detail here, look at
+ * an example to figure out how it works. There is also a tui option. This
+ * option will let you render a nice interface in terminal. This is espcially
+ * usefull when you have a large number of tests. The tui uses vim keybinds to
+ * navigate and enter to run a test. (This is still in development!)
  *
  * IMPORTANT(Elias): TESTUTILS_ENABLE_TERM_COLORS must be 0 when using
  * TESTUTILS_ENABLE_TUI.
@@ -64,11 +65,6 @@ global_variable int32 term_output_window_y = 1;
                              ++term_output_window_y;\
                              wrefresh(term_output_window);\
                             )
-#define TestUtils_Tui(a) testutils_tui(#a, a, sizeof(a)/sizeof(*(a)))
-#else
-#define TestUtils_Tui(a) printf("Testutils tui is not enabled!\n"\
-                                "Enable it by defining TESTUTILS_ENABLE_TUI"\
-				"as 1 before including testutils.h.\n");
 #endif
 
 
@@ -97,7 +93,7 @@ struct TestUtilsTest {
 
 /* function declartations */
 #if TESTUTILS_ENABLE_TUI
-internal void testutils_tui(char *name, TestUtilsTest *tests, int32 testcount);
+internal void testutils_tui(TestUtilsTest *tests, int32 testcount);
 internal void testutils_tui_handle_input(char *input, TestUtilsTest *tests,
 				       int32 testcount, int32 *selected_index);
 internal void testutils_tui_render_select(WINDOW *win, TestUtilsTest *tests,
@@ -178,7 +174,7 @@ testutils_tui_render_select(WINDOW *win, TestUtilsTest *tests, int32 testcount,
   	} else {
 		TestUtils_Tui_Dim(win, mvwprintw(win, 1, 1, "      All tests"));
   	}
-  	for (uint32 i = 0; i < testcount; ++i) {
+  	for (int32 i = 0; i < testcount; ++i) {
 		if (*selected_index == i + 1) {
 			TestUtils_Tui_Bold(win, mvwprintw(win, 2 + i, 1,
 					"> %2d. %s", i + 1, tests[i].name));
@@ -199,7 +195,7 @@ testutils_tui_render_output(WINDOW *win)
 }
 
 internal void
-testutils_tui(char *name, TestUtilsTest *tests, int32 testcount)
+testutils_tui(TestUtilsTest *tests, int32 testcount)
 {
 	int32 screen_width = 0, screen_height = 0, selected_index = 0;
   	WINDOW *win_select = 0x0, *win_output = 0x0;

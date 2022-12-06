@@ -82,3 +82,17 @@ m_pool_free(struct m_pool *p, void *ptr)
 
 #define BASE_MEMORY_POOL_H
 #endif
+
+/* references */
+
+/* TODO(Elias): Put these references in a decent format xd */
+
+/* (c) This code is based on ideas and code from:
+ * 1. Base [4]: Memory Management, Mr. 4th Programming by Allen Webster
+ *    https://www.youtube.com/watch?v=L79vSP8yV2g
+ * 2. Memory Allocation Strategies by GingerBill,
+ *    https://www.gingerbill.org/series/memory-allocation-strategies/
+ * 3. Handmade Hero eps034 by Casey Muratori
+ *    https://www.youtube.com/watch?v=IJYTwhqfKLg
+ * 4. Untangling Lifetimes: The Arena Allocator by Ryan Fleury
+ *    https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator */

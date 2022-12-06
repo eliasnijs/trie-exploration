@@ -13,7 +13,7 @@ struct dataset {
 	char *backbuffer;
 	size_t len;
 	char **words;
-	int32 wordcount;
+	uint32 wordcount;
 };
 
 /* function definitions */
@@ -21,6 +21,7 @@ internal int32 dataset_file_load(char *path, struct dataset *ds);
 internal void dataset_die(struct dataset *ds);
 internal void dataset_generate(int32 l_lb, int32 l_ub, int32 wordcount,
 			       struct dataset *ds);
+internal void dataset_shuffle(struct dataset *ds);
 
 /* function implementations */
 internal void
@@ -42,13 +43,13 @@ dataset_file_load(char *path, struct dataset *ds)
 		DebugLogError("failed to read file at: %s", path);
 		return 1;
 	}
-	int32 flen = filelen(f);
+	uint32 flen = filelen(f);
 	ds->backbuffer = (char *)calloc(flen, sizeof(char));
 	fread(ds->backbuffer, sizeof(char), flen, f);
 	fclose(f);
 	ds->len = flen;
 	ds->wordcount = 0;
-	for (int32 i = 0; i < flen; ++i) {
+	for (uint32 i = 0; i < flen; ++i) {
 		if (ds->backbuffer[i] == '\n') {
 			++ds->wordcount;
 		}
@@ -67,33 +68,15 @@ dataset_file_load(char *path, struct dataset *ds)
 }
 
 internal void
-dataset_generate(int32 l_lb, int32 l_ub, int32 wordcount, struct dataset *ds)
+dataset_shuffle(struct dataset *ds)
 {
-/* TODO(Elias): This uses rand() at the moment. Expand this function with the
- * capability to sample from given distritubtions.
- * IMPORTANT(Elias): The alphabet size is standard ASCII
- * */
-	Assert(l_lb < l_ub);
-	Assert(wordcount > 0);
-	srand(nanos());
-	ds->wordcount = wordcount;
-	int32 lengths[ds->wordcount];
-	int32 memsize = 0;
-	for (int32 i = 0; i < ds->wordcount; ++i) {
-		int32 l = l_lb + (rand() % (l_ub - l_lb));
-		lengths[i] = l;
-		memsize += l + 1;
-	}
-	ds->backbuffer = (char *)calloc(1, memsize);
-	ds->words = (char **)calloc(ds->wordcount, sizeof(char *));
-	int32 memindex = 0;
-	for (int32 i_word = 0; i_word < ds->wordcount; ++i_word) {
-		ds->words[i_word] = &ds->backbuffer[memindex];
-		int32 l = lengths[i_word];
-		for (int32 i_letter = 0; i_letter < l; ++i_letter) {
-			ds->words[i_word][i_letter] = rand() % 0b1111111;
-		}
-		ds->words[i_word][l] = 0;
-		memindex += l + 1;
+	srand(nanos()); /* TODO(Elias): set random seed based on the current
+			 * time, not sure if this is a legitimate way to
+			 * randomize. */
+	for (uint32 i1 = ds->wordcount - 1; i1 > 0; --i1) {
+		int32 i2 = rand() % (i1 + 1);
+		void *temp = ds->words[i2];
+		ds->words[i2] = ds->words[i1];
+		ds->words[i1] = temp;
 	}
 }

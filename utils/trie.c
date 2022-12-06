@@ -1,5 +1,5 @@
 /* depends on:
- * stdint.h, trie_ternary.h, trie_array.h, trie_custom.h
+ * stdint.h, stdbool.h, stddef.h, trie_ternary.h, trie_array.h, trie_custom.h
  * */
 
 /* Wrapper for different trie implementations. (This way we can avoid a lot of
@@ -11,7 +11,7 @@ typedef void * (* trie_init_fptr)();
 typedef void * (* trie_init_wmem_fptr)(size_t l);
 typedef void (* trie_free_fptr)(void *t);
 typedef void (* trie_print_fptr)(void *t, FILE *f);
-typedef bool8 (* trie_oper_fptr)(void *t, const char *s);
+typedef bool (* trie_oper_fptr)(void *t, const char *s);
 typedef size_t (* trie_size_fptr)(void *t);
 
 /* enumerations, structs, unions */

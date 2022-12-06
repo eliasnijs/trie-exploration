@@ -4,10 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
-#include "base/base.c"
-#include "base/utils.c"
-#include "base/m_pool.c"
+#include "utils/base.h"
+#include "utils/m_utils.c"
+#include "utils/m_pool.c"
 
 /* Implementation of the Ternary Trie Datastructure. The rationale and specifics
  * of this structure can be found in the following paper:
@@ -48,14 +50,14 @@ struct ttrie * ternarytrie_init_wmem(size_t backbufferlen);
 struct ttrie * ternarytrie_init();
 void ternarytrie_free(struct ttrie *tst);
 void ternarytrie_print(FILE *f, struct ttrie *tst);
-bool8 ternarytrie_add(struct ttrie *tst, const char* s);
-bool8 ternarytrie_search(struct ttrie *tst, const char* s);
-bool8 ternarytrie_remove(struct ttrie *tst, const char *s);
+bool ternarytrie_add(struct ttrie *tst, const char* s);
+bool ternarytrie_search(struct ttrie *tst, const char* s);
+bool ternarytrie_remove(struct ttrie *tst, const char *s);
 size_t ternarytrie_size(struct ttrie *tst);
 internal void _ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j,
 				 int32 w, bool32 enter);
 internal void _ternarytrie_remove(struct ttrie_node **n, const char *c,
-				  const char *s, bool8 *is_success,
+				  const char *s, bool *is_success,
 				  struct m_pool *pool);
 internal void _ternarytrie_die(struct ttrie_node *n, struct m_pool *pool);
 
@@ -143,7 +145,7 @@ ternarytrie_print(FILE *f, struct ttrie *tst)
 	fputs("\n", f);
 }
 
-bool8
+bool
 ternarytrie_search(struct ttrie *tst, const char* s)
 {
 	const char *c = s;
@@ -162,7 +164,7 @@ ternarytrie_search(struct ttrie *tst, const char* s)
 	return 0;
 }
 
-bool8
+bool
 ternarytrie_add(struct ttrie *tst, const char* s)
 {
 	int32 s_i = 0, m = strlen(s);
@@ -204,7 +206,7 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 
 internal void
 _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
-		    bool8 *is_success, struct m_pool *pool)
+		    bool *is_success, struct m_pool *pool)
 {
 	if (!*n) {
 		return;
@@ -252,10 +254,10 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 	}
 }
 
-bool8
+bool
 ternarytrie_remove(struct ttrie *tst, const char *s)
 {
-	bool8 is_success = false;
+	bool is_success = false;
 	_ternarytrie_remove(&tst->root, s, s, &is_success, &tst->pool);
 	if (is_success) {
 		--tst->wc;

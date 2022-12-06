@@ -5,9 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
-#include "base/base.c"
-#include "base/utils.c"
+#include "utils/base.h"
 
 /* Implementation of an Array Trie Datastructure, more specifically a Patricia
  * Trie. The rationale and specifics of this structure can be found in the
@@ -36,15 +37,17 @@ struct atrie {
 struct atrie * arraytrie_init();
 void arraytrie_free(struct atrie *at);
 void arraytrie_print(FILE *f, struct atrie *at);
-bool8 arraytrie_add(struct atrie *at, const char *s);
-bool8 arraytrie_search(struct atrie *at, const char *s);
-bool8 arraytrie_remove(struct atrie *at, const char* s);
+bool arraytrie_add(struct atrie *at, const char *s);
+bool arraytrie_search(struct atrie *at, const char *s);
+bool arraytrie_remove(struct atrie *at, const char* s);
 size_t arraytrie_size(struct atrie *trie);
 internal void _arraytrie_free(struct atrie_node *n);
 internal void _arraytrie_remove(struct atrie_node **n, const char *s, int32 l,
-				 int32 i_s, bool8 *is_success);
+				 int32 i_s, bool *is_success);
 internal void _arraytrie_print(FILE *f, struct atrie_node *n, int32 j, int32 w,
 			       bool32 enter);
+internal struct atrie_node * node_new(const char *s, int32 m);
+internal void node_die(struct atrie_node *n);
 
 /* function implementations */
 internal struct atrie_node *
@@ -99,7 +102,6 @@ arraytrie_free(struct atrie *at)
 	free(at);
 }
 
-/* TODO: clean this up */
 internal void
 _arraytrie_print(FILE *f, struct atrie_node *n, int32 j, int32 w, bool32 enter)
 {
@@ -135,7 +137,7 @@ arraytrie_print(FILE *f, struct atrie *at)
 	fprintf(f, "\n");
 }
 
-bool8
+bool
 arraytrie_search(struct atrie *at, const char *s)
 {
 	int32 i_s = 0, m = strlen(s);
@@ -156,7 +158,7 @@ arraytrie_search(struct atrie *at, const char *s)
 	return false;
 }
 
-bool8
+bool
 arraytrie_add(struct atrie *at, const char *s)
 {
 	int32 i_s = 0, m = strlen(s);
@@ -164,7 +166,8 @@ arraytrie_add(struct atrie *at, const char *s)
 	while (1) {
 		if (!*n) {
 			*n = node_new(&s[i_s], m - i_s);
-			(*n)->ls = strdup(s, m);
+			(*n)->ls = (char *)calloc(m + 1, 1);
+			memcpy((*n)->ls, s, m);
 			++at->wc;
 			return true;
 		}
@@ -180,8 +183,8 @@ arraytrie_add(struct atrie *at, const char *s)
 		if (i_diff < (*n)->m) {
 			char splitchar = (*n)->s[i_diff];
 			struct atrie_node *n2 = node_new((*n)->s, i_diff);
-			char *t = strdup((*n)->s + i_diff + 1,
-					 (*n)->m - i_diff - 1);
+			char *t = (char *)calloc((*n)->m - i_diff, 1);
+			memcpy(t, (*n)->s + i_diff + 1, (*n)->m - i_diff - 1);
 			free((*n)->s);
 			(*n)->s = t;
 			(*n)->m = (*n)->m - i_diff - 1;
@@ -196,7 +199,7 @@ arraytrie_add(struct atrie *at, const char *s)
 
 internal void
 _arraytrie_remove(struct atrie_node **n, const char *s, int32 m, int32 i_s,
-		  bool8 *is_success)
+		  bool *is_success)
 {
 	if (!*n) {
 		return;
@@ -244,10 +247,10 @@ _arraytrie_remove(struct atrie_node **n, const char *s, int32 m, int32 i_s,
 	}
 }
 
-bool8
+bool
 arraytrie_remove(struct atrie *at, const char* s)
 {
-	bool8 is_success = false;
+	bool is_success = false;
 	_arraytrie_remove(&at->root, s, strlen(s), 0, &is_success);
 	if (is_success) {
 		--at->wc;

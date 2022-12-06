@@ -1,4 +1,25 @@
-/* configuration */
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
+#include <time.h>
+#include <ncurses.h>
+
+#include "../include/ternarytrie_extended.h"
+#include "../include/arraytrie_extended.h"
+#include "../include/customtrie_extended.h"
+
+#include "../utils/base.h"
+#include "../utils/ansii_esc_codes.h"
+#include "../utils/utils.c"
+#include "../utils/dataset.c"
+#include "../utils/trie.c"
+
+#define TESTUTILS_ENABLE_TERM_COLORS 0
+#define TESTUTILS_ENABLE_TUI 0
+#include "testutils.c"
 
 /* TODO(Elias): Do this in a better way. */
 global_variable struct trie TestsTrieModel = {0};
@@ -147,9 +168,9 @@ tests_trie_add_five_remove_one(TestUtilsState *testutilsstate)
 	testutilsstate->cleanup     = (void (*)(void *))trie_free;
 
 	char *strings[] = { "4", "1", "3", "2", "7" };
-	for (int32 i = 0; i < ArrayLength(strings); ++i) {
+	for (uint32 i = 0; i < ArrayLength(strings); ++i) {
 		TestUtils_Assert(trie_add(&trie, strings[i]));
-		for (int32 j = 0; j <= i; ++j) {
+		for (uint32 j = 0; j <= i; ++j) {
 			TestUtils_Assert(trie_search(&trie, strings[j]));
 		}
 	}
@@ -172,14 +193,14 @@ tests_trie_add_three_remove_one(TestUtilsState *testutilsstate)
 	testutilsstate->cleanup     = (void (*)(void *))trie_free;
 
 	char *strings[] = { "04", "01", "07" };
-	for (int32 i = 0; i < ArrayLength(strings); ++i) {
+	for (uint32 i = 0; i < ArrayLength(strings); ++i) {
 		TestUtils_Assert(trie_add(&trie, strings[i]));
-		for (int32 j = 0; j <= i; ++j) {
+		for (uint32 j = 0; j <= i; ++j) {
 			TestUtils_Assert(trie_search(&trie, strings[j]));
 		}
 	}
 	TestUtils_Assert(trie_remove(&trie, strings[0]));
-	for (int32 j = 1; j < ArrayLength(strings); ++j) {
+	for (uint32 j = 1; j < ArrayLength(strings); ++j) {
 		TestUtils_Assert(trie_search(&trie, strings[j]));
 	}
 	trie_free(&trie);
@@ -428,13 +449,13 @@ tests_trie_add_thesame(TestUtilsState *testutilsstate)
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
 
 	char *s[] = {"Hello", "World", "Universe", "Heaven", "Hell"};
-	for (int i = 0; i < ArrayLength(s); ++i) {
+	for (uint32 i = 0; i < ArrayLength(s); ++i) {
 		TestUtils_Assert(trie_add(&trie, s[i]));
 	}
-	for (int i = 0; i < ArrayLength(s); ++i) {
+	for (uint32 i = 0; i < ArrayLength(s); ++i) {
 		TestUtils_Assert(!trie_add(&trie, s[i]));
 	}
-	for (int i = 0; i < ArrayLength(s); ++i) {
+	for (uint32 i = 0; i < ArrayLength(s); ++i) {
 		TestUtils_Assert(trie_search(&trie, s[i]));
 	}
 
@@ -455,10 +476,10 @@ tests_trie_add_splay_test(TestUtilsState *testutilsstate)
 		{"3", "1", "2"},
 		{"3", "2", "1"},
 	};
-	for (int32 i = 0; i < 4; ++i) {
+	for (uint32 i = 0; i < 4; ++i) {
 		/* DebugLogLine(); */
 		trie_init(&trie);
-		for (int32 j = 0; j < 3; ++j) {
+		for (uint32 j = 0; j < 3; ++j) {
 			char *str = strings[i][j];
 			TestUtils_Assert(trie_add(&trie, str));
 		}
@@ -481,7 +502,7 @@ tests_trie_add_splay_test2(TestUtilsState *testutilsstate)
 		"1", "2", "3", "4", "5", "6", "9", "12",
 	};
 	trie_init(&trie);
-	for (int32 j = 0; j < ArrayLength(strings); ++j) {
+	for (uint32 j = 0; j < ArrayLength(strings); ++j) {
 		/* DebugLogLine(); */
 		char *str = strings[j];
 		/* DebugLog("Adding %s", str); */
@@ -490,7 +511,7 @@ tests_trie_add_splay_test2(TestUtilsState *testutilsstate)
 	}
 	/* DebugLogLine(); */
 	/* DebugLog("Searching now"); */
-	for (int32 j = 0; j < ArrayLength(strings); ++j) {
+	for (uint32 j = 0; j < ArrayLength(strings); ++j) {
 		/* DebugLogLine(); */
 		TestUtils_Assert(trie_search(&trie, strings[j]));
 		/* trie_print(&trie, stdout); */
@@ -510,14 +531,14 @@ tests_trie_add_splay_test3(TestUtilsState *testutilsstate)
 		"01", "02", "03", "04", "05", "016", "017", "018", "019",
 	};
 	trie_init(&trie);
-	for (int32 j = 0; j < ArrayLength(strings); ++j) {
+	for (uint32 j = 0; j < ArrayLength(strings); ++j) {
 		/* DebugLogLine(); */
 		char *str = strings[j];
 		/* DebugLog("Adding %s", str); */
 		TestUtils_Assert(trie_add(&trie, str));
 		/* trie_print(&trie, stdout); */
 	}
-	for (int32 j = 0; j < ArrayLength(strings); ++j) {
+	for (uint32 j = 0; j < ArrayLength(strings); ++j) {
 		TestUtils_Assert(trie_search(&trie, strings[j]));
 	}
 	trie_free(&trie);
@@ -667,10 +688,10 @@ tests_trie_add_way_more(TestUtilsState *testutilsstate)
 		"sprauchled",
 	};
 
-	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+	for (uint32 i = 0; i < ArrayLength(ss); ++i) {
 		TestUtils_Assert(trie_add(&trie, ss[i]));
 	}
-	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+	for (uint32 i = 0; i < ArrayLength(ss); ++i) {
 		TestUtils_Assert(trie_search(&trie, ss[i]));
 	}
 	trie_free(&trie);
@@ -712,17 +733,17 @@ tests_trie_remove_way_more(TestUtilsState *testutilsstate)
 		"hypocrite's",
 	};
 
-	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+	for (uint32 i = 0; i < ArrayLength(ss); ++i) {
 		TestUtils_Assert(trie_add(&trie, ss[i]));
 	}
-	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+	for (uint32 i = 0; i < ArrayLength(ss); ++i) {
 		TestUtils_Assert(trie_search(&trie, ss[i]));
 	}
-	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+	for (uint32 i = 0; i < ArrayLength(ss); ++i) {
 		/* DebugLogString(ss[i]); */
 		TestUtils_Assert(trie_remove(&trie, ss[i]));
 	}
-	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+	for (uint32 i = 0; i < ArrayLength(ss); ++i) {
 		TestUtils_Assert(!trie_search(&trie, ss[i]));
 	}
 	trie_free(&trie);
@@ -748,7 +769,7 @@ tests_trie_dataset(TestUtilsState *testutilsstate, char *path)
 
 	/* shuffle_ptr((void **)ds.words, ds.wordcount); */
 
-	int32 count = ds.wordcount;
+	uint32 count = ds.wordcount;
 	printf("> checking add\n");
 	for (uint32 i = 0; i < count; ++i) {
 		TestUtils_Assert(trie_add(&trie, ds.words[i]));
@@ -858,3 +879,24 @@ global_variable TestUtilsTest tests_trie[] = {
 	TestUtils_Make_Test(tests_trie_dataset_large),
 	TestUtils_Make_Test(tests_trie_dataset_words),
 };
+
+/* main */
+int32
+main()
+{
+	/* TestsTrieModel = TernaryTrieModel; */
+	/* testutils_tui(tests_trie, ArrayLength(tests_trie) - 1); */
+
+	TestUtilsState ts = {0};
+	printf(">>> Testing Ternary\n");
+	TestsTrieModel = TernaryTrieModel;
+	TestUtils_RunMultiple(&ts, tests_trie);
+	printf(">>> Testing Array\n");
+	TestsTrieModel = ArrayTrieModel;
+	TestUtils_RunMultiple(&ts, tests_trie);
+	printf(">>> Testing Custom\n");
+	TestsTrieModel = CustomTrieModel;
+	TestUtils_RunMultiple(&ts, tests_trie);
+
+	return 0;
+}
