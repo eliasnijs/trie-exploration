@@ -38,9 +38,61 @@ benchmark_add(struct trie *trie, struct dataset *ds)
 	return end_t - start_t;
 }
 
+internal uint64
+benchmark_search(struct trie *trie, struct dataset *ds)
+{
+	trie_init(trie);
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		trie_add(trie, ds->words[i]);
+	}
+	uint64 start_t = nanos();
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		trie_search(trie, ds->words[i]);
+	}
+	uint64 end_t = nanos();
+	trie_free(trie);
+	return end_t - start_t;
+}
+
+internal uint64
+benchmark_remove(struct trie *trie, struct dataset *ds)
+{
+	trie_init(trie);
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		trie_add(trie, ds->words[i]);
+	}
+	uint64 start_t = nanos();
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		trie_remove(trie, ds->words[i]);
+	}
+	uint64 end_t = nanos();
+	trie_free(trie);
+	return end_t - start_t;
+}
+
+internal uint64
+benchmark_mix(struct trie *trie, struct dataset *ds)
+{
+	srand(nanos());
+	trie_init(trie);
+	for (uint32 i = 0; i < ds->wordcount; i += 2) {
+		trie_add(trie, ds->words[i]);
+	}
+	uint64 start_t = nanos();
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		int32 operation = rand() % 3;
+		trie->oper[i](trie->t, ds->words[i]);
+	}
+	uint64 end_t = nanos();
+	trie_free(trie);
+	return end_t - start_t;
+}
+
 /* benchmarks batch */
 global_variable benchmark_fptr benchmarks[] = {
-	benchmark_add
+	benchmark_add,
+	benchmark_search,
+	benchmark_remove
 };
 
 /* main */
