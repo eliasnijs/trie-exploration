@@ -44,10 +44,7 @@ main_benchmark()
 		"resources/words.txt",
 	};
 	int32 memamount[] = {
-		/* Kilobytes(300), */
-		/* Megabytes(4), */
-		/* Megabytes(500), */
-		/* Megabytes(500), */
+		0,0,0,0,0,0,0,0,0,0
 	};
 
 	printf("\n");
@@ -157,7 +154,7 @@ main_tests()
 int32
 main(int32 argc, char *argv[])
 {
-	main_tests();
-	/* main_benchmark(); */
+	/* main_tests(); */
+	main_benchmark();
 	return 0;
 }
