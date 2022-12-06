@@ -29,7 +29,12 @@
 struct ttrie_node  {
 	char *s;
 	char splitchar;
-	struct ttrie_node  *lo, *eq, *hi;
+	union {
+		struct ttrie_node *cs[3];
+		struct {
+			struct ttrie_node  *lo, *hi, *eq;
+		};
+	};
 };
 
 struct ttrie {
@@ -60,9 +65,9 @@ struct ttrie *
 ternarytrie_init_wmem(size_t backbufferlen)
 {
 	struct ttrie *tst = (struct ttrie *)calloc(1, sizeof(struct ttrie));
-	uint8 *bb = (uint8 *)malloc(backbufferlen);
-	m_pool_init(&tst->pool, bb, backbufferlen,
-		    sizeof(struct ttrie_node), MEM_DEFAULT_ALIGNMENT);
+	/* uint8 *bb = (uint8 *)malloc(backbufferlen); */
+	/* m_pool_init(&tst->pool, bb, backbufferlen, */
+	/* 	    sizeof(struct ttrie_node), MEM_DEFAULT_ALIGNMENT); */
 	return tst;
 }
 
@@ -84,14 +89,14 @@ _ternarytrie_die(struct ttrie_node *n, struct m_pool *pool)
         if (n->s) {
                 free(n->s);
         }
-	m_pool_free(pool, n);
-	/* free(n); */
+	/* m_pool_free(pool, n); */
+	free(n);
 }
 
 void ternarytrie_free(struct ttrie *tst)
 {
 	_ternarytrie_die(tst->root, &tst->pool);
-	free(tst->pool.buf);
+	/* free(tst->pool.buf); */
 	free(tst);
 }
 
@@ -147,13 +152,11 @@ ternarytrie_search(struct ttrie *tst, const char* s)
 		if (n->s) {
 			return strcmp(n->s, s) == 0;
 		}
-		if (*c < n->splitchar) {
-			n = n->lo;
-		} else if (*c > n->splitchar) {
-			n = n->hi;
-		} else {
+		if (*c == n->splitchar) {
 			++c;
 			n = n->eq;
+		} else {
+			n = n->cs[*c > n->splitchar];
 		}
 	}
 	return 0;
@@ -166,9 +169,9 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 	struct ttrie_node **n = &tst->root;
 	while (s_i <= m) {
 		if (!*n) {
-			/* *n = (struct ttrie_node *)calloc(1, sizeof( */
-			/* 	struct ttrie_node)); */
-			*n = m_pool_alloc(&tst->pool);
+			*n = (struct ttrie_node *)calloc(1, sizeof(
+				struct ttrie_node));
+			/* *n = m_pool_alloc(&tst->pool); */
 			if (!*n) {
 				return false;
 			}
@@ -183,19 +186,17 @@ ternarytrie_add(struct ttrie *tst, const char* s)
 				return false;
 			}
 			struct ttrie_node *n_end = *n;
-			/* *n = (struct ttrie_node *)calloc( */
-			/*     1, sizeof(struct ttrie_node)); */
-			*n = m_pool_alloc(&tst->pool);
+			*n = (struct ttrie_node *)calloc(
+			    1, sizeof(struct ttrie_node));
+			/* *n = m_pool_alloc(&tst->pool); */
 			(*n)->splitchar = n_end->s[s_i];
 			(*n)->eq = n_end;
 		}
-		if (s[s_i] < (*n)->splitchar) {
-			n = &(*n)->lo;
-		} else if (s[s_i] > (*n)->splitchar) {
-			n = &(*n)->hi;
-		} else {
+		if (s[s_i] == (*n)->splitchar) {
 			++s_i;
 			n = &(*n)->eq;
+		} else {
+			n = &(*n)->cs[s[s_i] > (*n)->splitchar];
 		}
 	}
 	return false;
@@ -209,13 +210,12 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 		return;
 	}
 	if (!(*n)->s) {
-		if (*c < (*n)->splitchar) {
-			_ternarytrie_remove(&(*n)->lo, c, s, is_success, pool);
-		} else if (*c > (*n)->splitchar) {
-			_ternarytrie_remove(&(*n)->hi, c, s, is_success, pool);
-		} else {
+		if (*c == (*n)->splitchar) {
 			_ternarytrie_remove(&(*n)->eq, ++c, s, is_success,
 					    pool);
+		} else {
+			_ternarytrie_remove(&(*n)->cs[*c > (*n)->splitchar], c,
+					    s, is_success, pool);
 		}
 	}
 	if (!(*n)->eq) {
@@ -235,19 +235,19 @@ _ternarytrie_remove(struct ttrie_node **n, const char *c, const char *s,
 			if ((*n)->s) {
 				char *ns = (*n)->s;
 				(*n)->s = 0x0;
-				/* (*n)->eq = (struct ttrie_node *)calloc( */
-				/*     1, sizeof(struct ttrie_node)); */
-				(*n)->eq = m_pool_alloc(pool);
+				(*n)->eq = (struct ttrie_node *)calloc(
+				    1, sizeof(struct ttrie_node));
+				/* (*n)->eq = m_pool_alloc(pool); */
 				(*n)->eq->s = ns;
 			}
 		} else {
-			*n = ((*n)->lo) ? t->lo : t->hi;
+			*n = t->cs[(*n)->lo == 0];
 		}
 		if (t->s) {
                         free(t->s);
                 }
-		/* free(t); */
-		m_pool_free(pool, t);
+		free(t);
+		/* m_pool_free(pool, t); */
 		*is_success = true;
 	}
 }

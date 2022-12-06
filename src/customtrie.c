@@ -70,9 +70,9 @@ struct ctrie *
 customtrie_init_wmem(size_t backbufferlen)
 {
 	struct ctrie *ct = (struct ctrie *)calloc(1, sizeof(struct ctrie));
-	uint8 *bb = (uint8 *)malloc(backbufferlen);
-	m_pool_init(&ct->pool, bb, backbufferlen,
-		    sizeof(struct ctrie_node), MEM_DEFAULT_ALIGNMENT);
+	/* uint8 *bb = (uint8 *)malloc(backbufferlen); */
+	/* m_pool_init(&ct->pool, bb, backbufferlen, */
+	/* 	    sizeof(struct ctrie_node), MEM_DEFAULT_ALIGNMENT); */
 	return ct;
 }
 struct ctrie *
@@ -93,15 +93,15 @@ _customtrie_die(struct ctrie_node *n, struct m_pool *pool)
 	if (n->s) {
 		free(n->s);
 	}
-	m_pool_free(pool, n);
-	/* free(n); */
+	/* m_pool_free(pool, n); */
+	free(n);
 }
 
 void customtrie_free(struct ctrie *ct)
 {
 	customtrie_splay_clear(ct);
 	_customtrie_die(ct->root, &ct->pool);
-	free(ct->pool.buf);
+	/* free(ct->pool.buf); */
 	free(ct);
 }
 
@@ -198,23 +198,23 @@ customtrie_splay(struct ctrie *ct)
 			struct ctrie_node *temp = t->lo;
 			t->lo = temp->eq;
 			t->lo->splitchar = temp->splitchar;
-			/* free(temp); */
-			 m_pool_free(&ct->pool, temp);
+			free(temp);
+			 /* m_pool_free(&ct->pool, temp); */
 		}
 		if (t->hi->eq && !t->hi->hi && !t->hi->lo &&t->hi->eq->s
 		    && t->hi != n) {
 			struct ctrie_node *temp = t->hi;
 			t->hi = temp->eq;
 			t->hi->splitchar = temp->splitchar;
-			/* free(temp); */
-			 m_pool_free(&ct->pool, temp);
+			free(temp);
+			 /* m_pool_free(&ct->pool, temp); */
 		}
 		if (t->s) {
 			char *ns = n->s;
 			n->s = 0x0;
-			/* n->eq = (struct ctrie_node *)calloc( */
-			/*     1, sizeof(struct ctrie_node)); */
-			n->eq = m_pool_alloc(&ct->pool);
+			n->eq = (struct ctrie_node *)calloc(
+			    1, sizeof(struct ctrie_node));
+			/* n->eq = m_pool_alloc(&ct->pool); */
 			n->eq->s = ns;
 		}
 		if (ct->splaycnt == 0) {
@@ -312,9 +312,9 @@ customtrie_add(struct ctrie *ct, const char* s)
 
 	while (s_i <= m) {
 		if (!*n) {
-			/* *n = (struct ctrie_node *)calloc(1, sizeof( */
-			/* 	struct ctrie_node)); */
-			*n = m_pool_alloc(&ct->pool);
+			*n = (struct ctrie_node *)calloc(1, sizeof(
+				struct ctrie_node));
+			/* *n = m_pool_alloc(&ct->pool); */
 			if (!*n) {
 				return false;
 			}
@@ -333,9 +333,9 @@ customtrie_add(struct ctrie *ct, const char* s)
 				return false;
 			}
 			struct ctrie_node *n_end = *n;
-			/* *n = (struct ctrie_node *)calloc( */
-			/*     1, sizeof(struct ctrie_node)); */
-			*n = m_pool_alloc(&ct->pool);
+			*n = (struct ctrie_node *)calloc(
+			    1, sizeof(struct ctrie_node));
+			/* *n = m_pool_alloc(&ct->pool); */
 			(*n)->splitchar = n_end->s[s_i];
 			(*n)->eq = n_end;
 		}
@@ -390,9 +390,9 @@ _customtrie_remove(struct ctrie *ct, struct ctrie_node **n, const char *c,
 				char *ns = (*n)->s;
 				(*n)->s = 0x0;
 				(*n)->splitchar = (*n)->splitchar;
-				/* (*n)->eq = (struct ctrie_node *)calloc( */
-				/*     1, sizeof(struct ctrie_node)); */
-				(*n)->eq = m_pool_alloc(&ct->pool);
+				(*n)->eq = (struct ctrie_node *)calloc(
+				    1, sizeof(struct ctrie_node));
+				/* (*n)->eq = m_pool_alloc(&ct->pool); */
 				(*n)->eq->s = ns;
 			}
 		} else {
@@ -401,8 +401,8 @@ _customtrie_remove(struct ctrie *ct, struct ctrie_node **n, const char *c,
 		if (t->s) {
 			free(t->s);
 		}
-		/* free(t); */
-		m_pool_free(&ct->pool, t);
+		free(t);
+		/* m_pool_free(&ct->pool, t); */
 		*is_success = true;
 	}
 }

@@ -14,8 +14,8 @@ common_flags="-std=c99 -pipe"
 # -> Debug Flags
 debug_dflags="$common_dflags -DENABLE_ASSERT=1 -DENABLE_DEBUGLOG=1"
 debug_wflags="$common_wflags"
-debug_flags="${common_flags} -Wall -g ${debug_wflags} ${debug_dflags}"
-# debug_flags="$common_flags -Wall -fsanitize=address -g ${debug_wflags} ${debug_dflags}"
+# debug_flags="${common_flags} -Wall -g ${debug_wflags} ${debug_dflags}"
+debug_flags="$common_flags -Wall -fsanitize=address -g ${debug_wflags} ${debug_dflags}"
 
 # -> Release Flags
 release_dflags="$common_dflags"

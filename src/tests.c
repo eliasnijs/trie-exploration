@@ -43,6 +43,7 @@ tests_trie_add_one(TestUtilsState *testutilsstate)
 	TestUtils_Assert(trie_add(&trie, string));
 	TestUtils_Assert(trie_search(&trie, string));
 	TestUtils_Assert(trie_size(&trie) == 1);
+	/* trie_print(&trie, stdout); */
 	trie_free(&trie);
 	return 0;
 }
@@ -59,7 +60,9 @@ tests_trie_add_two(TestUtilsState *testutilsstate)
 	const char* string = "Town";
 	const char* string2 = "Tomorrow";
 	TestUtils_Assert(trie_add(&trie, string));
+	/* trie_print(&trie, stdout); */
 	TestUtils_Assert(trie_add(&trie, string2));
+	/* trie_print(&trie, stdout); */
 	TestUtils_Assert(trie_search(&trie, string));
 	TestUtils_Assert(trie_search(&trie, string2));
 	TestUtils_Assert(trie_size(&trie) == 2);
@@ -82,6 +85,7 @@ tests_trie_add_three(TestUtilsState *testutilsstate)
 	TestUtils_Assert(trie_add(&trie, s1));
 	TestUtils_Assert(trie_add(&trie, s2));
 	TestUtils_Assert(trie_add(&trie, s3));
+	/* trie_print(&trie, stdout); */
 	TestUtils_Assert(trie_size(&trie) == 3);
 	TestUtils_Assert(trie_search(&trie, s1));
 	TestUtils_Assert(trie_search(&trie, s2));
@@ -238,14 +242,9 @@ tests_trie_add_more(TestUtilsState *testutilsstate)
 	TestUtils_Assert(trie_add(&trie, twenty));
 	TestUtils_Assert(trie_add(&trie, twentytwo));
 	TestUtils_Assert(trie_add(&trie, tomorrow));
-
 	TestUtils_Assert(trie_size(&trie) == 5);
-	/* trie_print(&trie, stdout); */
-
 	TestUtils_Assert(trie_search(&trie, one));
-	/* trie_print(&trie, stdout); */
 	TestUtils_Assert(trie_search(&trie, two));
-	/* trie_print(&trie, stdout); */
 	TestUtils_Assert(trie_search(&trie, twenty));
 	TestUtils_Assert(trie_search(&trie, twentytwo));
 	TestUtils_Assert(trie_search(&trie, tomorrow));
@@ -321,6 +320,7 @@ tests_trie_remove_not_present(TestUtilsState *testutilsstate)
 
 	TestUtils_Assert(trie_add(&trie, "this string exists"));
 	TestUtils_Assert(!trie_remove(&trie, "this string does not exist"));
+	TestUtils_Assert(trie_search(&trie, "this string exists"));
 
 	trie_free(&trie);
 	return 0;
@@ -525,10 +525,216 @@ tests_trie_add_splay_test3(TestUtilsState *testutilsstate)
 }
 
 internal int32
+tests_trie_add_ternary(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init(&trie);
+	TestUtils_Assert(trie.t != 0x0);
+  	testutilsstate->cleanupargs = (void *)&trie;
+  	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	TestUtils_Assert(trie_add(&trie, "abb"));
+	TestUtils_Assert(trie_search(&trie, "abb"));
+	TestUtils_Assert(trie_size(&trie) == 1);
+
+	TestUtils_Assert(trie_add(&trie, "abc"));
+	TestUtils_Assert(trie_search(&trie, "abb"));
+	TestUtils_Assert(trie_search(&trie, "abc"));
+	TestUtils_Assert(trie_size(&trie) == 2);
+
+	TestUtils_Assert(trie_add(&trie, "aba"));
+	TestUtils_Assert(trie_search(&trie, "abb"));
+	TestUtils_Assert(trie_search(&trie, "abc"));
+	TestUtils_Assert(trie_search(&trie, "aba"));
+	TestUtils_Assert(trie_size(&trie) == 3);
+
+	TestUtils_Assert(trie_remove(&trie, "abb"));
+	TestUtils_Assert(!trie_search(&trie, "abb"));
+	TestUtils_Assert(trie_search(&trie, "aba"));
+	TestUtils_Assert(trie_search(&trie, "abc"));
+	TestUtils_Assert(trie_size(&trie) == 2);
+
+	trie_free(&trie);
+	return 0;
+}
+
+internal int32
+tests_trie_add_ternary2(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init(&trie);
+	TestUtils_Assert(trie.t != 0x0);
+  	testutilsstate->cleanupargs = (void *)&trie;
+  	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	TestUtils_Assert(trie_add(&trie, "aba"));
+	TestUtils_Assert(trie_search(&trie, "aba"));
+	TestUtils_Assert(trie_size(&trie) == 1);
+
+	TestUtils_Assert(trie_add(&trie, "abb"));
+	TestUtils_Assert(trie_search(&trie, "abb"));
+	TestUtils_Assert(trie_size(&trie) == 2);
+
+	TestUtils_Assert(trie_add(&trie, "abc"));
+	TestUtils_Assert(trie_search(&trie, "abc"));
+	TestUtils_Assert(trie_size(&trie) == 3);
+
+	TestUtils_Assert(trie_remove(&trie, "abb"));
+	TestUtils_Assert(trie_size(&trie) == 2);
+	TestUtils_Assert(!trie_search(&trie, "abb"));
+	TestUtils_Assert(trie_search(&trie, "aba"));
+	TestUtils_Assert(trie_search(&trie, "abc"));
+
+	trie_free(&trie);
+	return 0;
+}
+
+internal int32
+tests_trie_add_ternary3(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init(&trie);
+	TestUtils_Assert(trie.t != 0x0);
+  	testutilsstate->cleanupargs = (void *)&trie;
+  	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	const char* af = "af";
+	const char* aa = "aa";
+    	const char* ax = "ax";
+    	const char* ab = "ab";
+
+    	TestUtils_Assert(trie_add(&trie, af));
+    	TestUtils_Assert(trie_add(&trie, aa));
+    	TestUtils_Assert(trie_add(&trie, ax));
+    	TestUtils_Assert(trie_add(&trie, ab));
+    	TestUtils_Assert(trie_size(&trie) == 4);
+
+    	TestUtils_Assert(trie_remove(&trie, af));
+    	TestUtils_Assert(trie_search(&trie, aa));
+    	TestUtils_Assert(trie_search(&trie, ax));
+    	TestUtils_Assert(trie_search(&trie, ab));
+    	TestUtils_Assert(trie_size(&trie) == 3);
+
+    	TestUtils_Assert(trie_remove(&trie, aa));
+    	TestUtils_Assert(trie_search(&trie, ax));
+    	TestUtils_Assert(trie_search(&trie, ab));
+    	TestUtils_Assert(trie_size(&trie) == 2);
+
+    	TestUtils_Assert(trie_remove(&trie, ax));
+    	TestUtils_Assert(trie_search(&trie, ab));
+    	TestUtils_Assert(trie_size(&trie) == 1);
+
+    	TestUtils_Assert(trie_remove(&trie, ab));
+    	TestUtils_Assert(trie_size(&trie) == 0);
+
+	trie_free(&trie);
+	return 0;
+}
+
+internal int32
+tests_trie_add_way_more(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init_wmem(&trie, Kilobytes(100));
+	TestUtils_Assert(trie.t != 0x0);
+  	testutilsstate->cleanupargs = (void *)&trie;
+  	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	const char *ss[] = {
+		"serais",
+		"straight-leaved",
+		"semilimber",
+		"benzol",
+		"helminthology",
+		"Aggappora",
+		"cointense",
+		"clottedness",
+		"quantization",
+		"Bowers",
+		"underdevil",
+		"unsectarianize",
+		"Un-parisian",
+		"too-short",
+		"potences",
+		"Nutley",
+		"Chikamatsu",
+		"cambaye",
+		"Cornaceae",
+		"balsamation",
+		"mulla",
+		"exsanguinate",
+		"pungie",
+		"sprauchled",
+	};
+
+	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+		TestUtils_Assert(trie_add(&trie, ss[i]));
+	}
+	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+		TestUtils_Assert(trie_search(&trie, ss[i]));
+	}
+	trie_free(&trie);
+	return 0;
+}
+
+internal int32
+tests_trie_remove_way_more(TestUtilsState *testutilsstate)
+{
+	struct trie trie = TestsTrieModel;
+	trie_init_wmem(&trie, Kilobytes(100));
+	TestUtils_Assert(trie.t != 0x0);
+  	testutilsstate->cleanupargs = (void *)&trie;
+  	testutilsstate->cleanup     = (void (*)(void *))trie_free;
+
+	const char *ss[] = {
+		"photobiological",
+		"serais",
+		"slothful",
+		"telepost",
+		"figuredly",
+		"goffer",
+		"angiostegnosis",
+		"devolves",
+		"minkfishes",
+		"limacoid",
+		"Dales",
+		"Clark",
+		"alcoholmetric",
+		"Resnais",
+		"dungas",
+		"cussos",
+		"whimmiest",
+		"Syconidae",
+		"discolorated",
+		"shirtfront",
+		"hygeists",
+		"hypercarnal",
+		"hypocrite's",
+	};
+
+	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+		TestUtils_Assert(trie_add(&trie, ss[i]));
+	}
+	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+		TestUtils_Assert(trie_search(&trie, ss[i]));
+	}
+	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+		/* DebugLogString(ss[i]); */
+		TestUtils_Assert(trie_remove(&trie, ss[i]));
+	}
+	for (int32 i = 0; i < ArrayLength(ss); ++i) {
+		TestUtils_Assert(!trie_search(&trie, ss[i]));
+	}
+	trie_free(&trie);
+	return 0;
+}
+
+
+internal int32
 tests_trie_dataset(TestUtilsState *testutilsstate, char *path)
 {
 	struct trie trie = TestsTrieModel;
-	trie_init_wmem(&trie, Megabytes(500));
+	trie_init_wmem(&trie, Megabytes(100));
 	/* trie_init(&trie); */
 	TestUtils_Assert(trie.t != 0);
   	testutilsstate->cleanupargs = (void *)&trie;
@@ -539,7 +745,8 @@ tests_trie_dataset(TestUtilsState *testutilsstate, char *path)
 	struct trie_and_dataset trie_ds = {&trie, &ds};
   	testutilsstate->cleanupargs = (void *)&trie_ds;
   	testutilsstate->cleanup     = (void (*)(void *))free_trie_and_dataset;
-	shuffle_ptr((void **)ds.words, ds.wordcount);
+
+	/* shuffle_ptr((void **)ds.words, ds.wordcount); */
 
 	int32 count = ds.wordcount;
 	printf("> checking add\n");
@@ -576,7 +783,6 @@ tests_trie_dataset(TestUtilsState *testutilsstate, char *path)
 	TestUtils_Assert(trie_size(&trie) == count);
 	printf("    > checking search  \n");
 	for (uint32 i = 0; i < count; ++i) {
-		struct ctrie_node *root = ((struct ctrie *)trie.t)->root;
 		TestUtils_Assert(trie_search(&trie, ds.words[i]));
 		TestUtils_Assert(trie_size(&trie) == count);
 	}
@@ -619,7 +825,7 @@ tests_trie_dataset_words(TestUtilsState *testutilsstate)
 
 /* tests-batch */
 global_variable TestUtilsTest tests_trie[] = {
-	/* TestUtils_Make_Test(tests_trie_print), */
+	TestUtils_Make_Test(tests_trie_print),
 	TestUtils_Make_Test(tests_trie_init),
 	TestUtils_Make_Test(tests_trie_add_one),
 	TestUtils_Make_Test(tests_trie_add_two),
@@ -629,18 +835,23 @@ global_variable TestUtilsTest tests_trie[] = {
 	TestUtils_Make_Test(tests_trie_search_not_present),
 	TestUtils_Make_Test(tests_trie_add_already_present),
 	TestUtils_Make_Test(tests_trie_add_more),
+	TestUtils_Make_Test(tests_trie_add_more2),
+	TestUtils_Make_Test(tests_trie_add_more3),
+	TestUtils_Make_Test(tests_trie_add_more4),
+	TestUtils_Make_Test(tests_trie_add_way_more),
+	TestUtils_Make_Test(tests_trie_add_splay_test),
+	TestUtils_Make_Test(tests_trie_add_splay_test2),
+	TestUtils_Make_Test(tests_trie_add_splay_test3),
+	TestUtils_Make_Test(tests_trie_add_thesame),
 	TestUtils_Make_Test(tests_trie_remove_one),
 	TestUtils_Make_Test(tests_trie_add_five_remove_one),
 	TestUtils_Make_Test(tests_trie_remove_more),
 	TestUtils_Make_Test(tests_trie_remove_not_present),
 	TestUtils_Make_Test(tests_trie_add_three_remove_one),
-	TestUtils_Make_Test(tests_trie_add_more2),
-	TestUtils_Make_Test(tests_trie_add_more3),
-	TestUtils_Make_Test(tests_trie_add_more4),
-	TestUtils_Make_Test(tests_trie_add_splay_test),
-	TestUtils_Make_Test(tests_trie_add_splay_test2),
-	TestUtils_Make_Test(tests_trie_add_splay_test3),
-	TestUtils_Make_Test(tests_trie_add_thesame),
+	TestUtils_Make_Test(tests_trie_remove_way_more),
+	TestUtils_Make_Test(tests_trie_add_ternary),
+	TestUtils_Make_Test(tests_trie_add_ternary2),
+	TestUtils_Make_Test(tests_trie_add_ternary3),
 	TestUtils_Make_Test(tests_trie_dataset_verysmall),
 	TestUtils_Make_Test(tests_trie_dataset_small),
 	TestUtils_Make_Test(tests_trie_dataset_middle),

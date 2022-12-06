@@ -6,7 +6,7 @@ Trie Project
 Compilation and Runnning
 
 - Compile debug build with: './build.sh' from '/'
-- Compile release/optimized build with: './build.sh release' from '/'
+- Compile release/optimized build with: './build.sh r' from '/'
 - Run with `run.sh` from '/'
 
 Notes on the design of the program
@@ -19,7 +19,7 @@ Notes on the design of the program
 - The syntax style followed is outlined in `STYLEGUIDE.txt`. There is an
   editorconfig file present at '/.editorconfig'
 - There are bunch of files included in 'src/base/', these are the files I use
-  in every c project. Not all of them necessarily used.
+  in every c project. Not all of them are necessarily used.
 
 Notes on the folder setup
 

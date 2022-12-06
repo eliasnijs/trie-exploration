@@ -102,5 +102,14 @@ ptr_align_forward(uintptr_t p, size_t align)
 	return p;
 }
 
+internal char *
+strdup(const char *s, int32 m)
+{
+	char *ns = (char *)calloc(m + 1, 1);
+	memcpy(ns, s, m);
+	/* strcpy(ns, s); */
+	return ns;
+}
+
 #define BASE_UTILS_H
 #endif

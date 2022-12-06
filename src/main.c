@@ -31,24 +31,23 @@ main_benchmark()
 	struct trie tries[] = {
 		CustomTrieModel,
 		TernaryTrieModel,
-		CustomTrieModel,
-		TernaryTrieModel,
+		ArrayTrieModel,
 	};
 	char *filepaths[] = {
-		/* "resources/geschud_piepklein.g6", */
-		/* "resources/geschud_klein.g6", */
-		/* "resources/geschud_middelmaat.g6", */
-		/* "resources/geschud_groot.g6", */
-		/* "resources/bonzai.g6", */
-		/* "resources/geschud.g6", */
-		/* "resources/globosum.g6", */
+		"resources/geschud_piepklein.g6",
+		"resources/geschud_klein.g6",
+		"resources/geschud_middelmaat.g6",
+		"resources/geschud_groot.g6",
+		"resources/bonzai.g6",
+		"resources/geschud.g6",
+		"resources/globosum.g6",
 		"resources/words.txt",
 	};
 	int32 memamount[] = {
 		/* Kilobytes(300), */
 		/* Megabytes(4), */
 		/* Megabytes(500), */
-		Megabytes(500),
+		/* Megabytes(500), */
 	};
 
 	printf("\n");
@@ -137,8 +136,19 @@ internal int32
 main_tests()
 {
 	TestUtilsState ts = {0};
-	/* TestsTrieModel = TernaryTrieModel; */
-	/* TestUtils_RunMultiple(&ts, tests_trie); */
+	printf(ANSII_ESC_BOLD\
+	       ANSII_ESC_RGB_FG(240, 150, 30)\
+	       ">>> Testing Ternary\n");
+	TestsTrieModel = TernaryTrieModel;
+	TestUtils_RunMultiple(&ts, tests_trie);
+	printf(ANSII_ESC_BOLD\
+	       ANSII_ESC_RGB_FG(240, 150, 30)\
+	       ">>> Testing Array\n");
+	TestsTrieModel = ArrayTrieModel;
+	TestUtils_RunMultiple(&ts, tests_trie);
+	printf(ANSII_ESC_BOLD\
+	       ANSII_ESC_RGB_FG(240, 150, 30)\
+	       ">>> Testing Custom\n");
 	TestsTrieModel = CustomTrieModel;
 	TestUtils_RunMultiple(&ts, tests_trie);
 	return 0;
@@ -147,7 +157,7 @@ main_tests()
 int32
 main(int32 argc, char *argv[])
 {
-	/* main_tests(); */
-	main_benchmark();
+	main_tests();
+	/* main_benchmark(); */
 	return 0;
 }

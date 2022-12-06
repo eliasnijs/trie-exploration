@@ -63,7 +63,7 @@ global_variable const struct trie TernaryTrieModel = {
 global_variable const struct trie ArrayTrieModel = {
 	0x0,
 	(trie_init_fptr)arraytrie_init,
-	0x0,
+	(trie_init_wmem_fptr)arraytrie_init,
 	(trie_free_fptr)arraytrie_free,
 	(trie_print_fptr)arraytrie_print,
 	{{
