@@ -47,13 +47,13 @@ struct ttrie {
 struct ttrie * ternarytrie_init_wmem(size_t backbufferlen);
 struct ttrie * ternarytrie_init();
 void ternarytrie_free(struct ttrie *tst);
-internal void _ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j,
-				 int32 w, bool32 enter);
 void ternarytrie_print(FILE *f, struct ttrie *tst);
 bool8 ternarytrie_add(struct ttrie *tst, const char* s);
 bool8 ternarytrie_search(struct ttrie *tst, const char* s);
 bool8 ternarytrie_remove(struct ttrie *tst, const char *s);
 size_t ternarytrie_size(struct ttrie *tst);
+internal void _ternarytrie_print(FILE *f, struct ttrie_node *n, int32 j,
+				 int32 w, bool32 enter);
 internal void _ternarytrie_remove(struct ttrie_node **n, const char *c,
 				  const char *s, bool8 *is_success,
 				  struct m_pool *pool);
