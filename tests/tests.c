@@ -5,7 +5,6 @@
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
-#include <ncurses.h>
 
 #include "../include/ternarytrie_extended.h"
 #include "../include/arraytrie_extended.h"
@@ -19,6 +18,9 @@
 
 #define TESTUTILS_ENABLE_TERM_COLORS 0
 #define TESTUTILS_ENABLE_TUI 0
+#if TESTUTILS_ENABLE_TUI
+#include <ncurses.h>
+#endif
 #include "testutils.c"
 
 /* TODO(Elias): Do this in a better way. */
@@ -836,12 +838,6 @@ tests_trie_dataset_large(TestUtilsState *testutilsstate)
 }
 
 internal int32
-tests_trie_dataset_globosum(TestUtilsState *testutilsstate)
-{
-	return tests_trie_dataset(testutilsstate, "resources/globosum.g6");
-}
-
-internal int32
 tests_trie_dataset_words(TestUtilsState *testutilsstate)
 {
 	return tests_trie_dataset(testutilsstate,
@@ -882,27 +878,45 @@ global_variable TestUtilsTest tests_trie[] = {
 	TestUtils_Make_Test(tests_trie_dataset_small),
 	TestUtils_Make_Test(tests_trie_dataset_middle),
 	TestUtils_Make_Test(tests_trie_dataset_large),
-	TestUtils_Make_Test(tests_trie_dataset_globosum),
 	TestUtils_Make_Test(tests_trie_dataset_words),
 };
 
 /* main */
 int32
-main()
+main(int32 argc, char *argv[])
 {
 	/* TestsTrieModel = TernaryTrieModel; */
 	/* testutils_tui(tests_trie, ArrayLength(tests_trie) - 1); */
 
+	/* handle commandline arguments */
+	argc -= 1;
+	argv = &argv[1];
+	if (argc > 0 && !strcmp(argv[0], "-h")) {
+		printf("\n");
+		printf("Trie Test Program\n");
+		printf("\n");
+		printf("syntax: ./tests <optional: -t> <trie> \n");
+		printf("<trie>			name of the trie\n");
+		printf("\n");
+		return 0;
+	}
+	if (argc != 1) {
+		fprintf(stderr, "wrong number of arguments\n");
+		return 1;
+	}
+	struct trie trie = {0};
+	if (!strcmp(argv[0], "ternary")) {
+		TestsTrieModel = TernaryTrieModel;
+	} else if (!strcmp(argv[0], "array")) {
+		TestsTrieModel = ArrayTrieModel;
+	} else if (!strcmp(argv[0], "custom")) {
+		TestsTrieModel = CustomTrieModel;
+	} else {
+		fprintf(stderr, "unknown trie\n");
+		return 1;
+	}
+	/* run tests */
 	TestUtilsState ts = {0};
-	printf(">>> Testing Ternary\n");
-	TestsTrieModel = TernaryTrieModel;
 	TestUtils_RunMultiple(&ts, tests_trie);
-	printf(">>> Testing Array\n");
-	TestsTrieModel = ArrayTrieModel;
-	TestUtils_RunMultiple(&ts, tests_trie);
-	printf(">>> Testing Custom\n");
-	TestsTrieModel = CustomTrieModel;
-	TestUtils_RunMultiple(&ts, tests_trie);
-
 	return 0;
 }

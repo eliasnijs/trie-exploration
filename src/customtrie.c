@@ -9,8 +9,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "utils/base.h"
-#include "utils/m_utils.c"
-#include "utils/m_pool.c"
+/* #include "utils/m_utils.c" */
+/* #include "utils/m_pool.c" */
 
 /* Implementation of a combination of a Ternary Trie Datastructure and Binary
  * Semi Spay tree. More specifically this means that when searching a node,

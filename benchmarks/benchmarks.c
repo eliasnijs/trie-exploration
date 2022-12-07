@@ -117,8 +117,7 @@ main(int32 argc, char *argv[])
 		printf("\n");
 		printf("Trie Benchmarking Program\n");
 		printf("\n");
-		printf("syntax:\n");
-		printf("benchmark <trie> <filepath> <benchmark index>\n");
+		printf("syntax: ./benchmark <trie> <filepath> <benchmark index>\n");
 		printf("<trie>			name of the trie\n");
 		printf("<filepath>		path to a dataset file\n");
 		printf("<benchmark index>	index of the benchmark\n");
@@ -142,7 +141,7 @@ main(int32 argc, char *argv[])
 	} else if (!strcmp(argv[0], "custom")) {
 		trie = CustomTrieModel;
 	} else {
-		fprintf(stderr, "unknown trie");
+		fprintf(stderr, "unknown trie\n");
 		return 1;
 	}
 	FILE *f = fopen(argv[1], "r");
@@ -160,8 +159,7 @@ main(int32 argc, char *argv[])
 	struct dataset ds = {0};
 	dataset_file_load(argv[1], &ds);
 	uint64 result = benchmarks[i_benchmark - 1].run(&trie, &ds);
-	printf("%-22s\t%12d\t%12f\n", argv[1], ds.wordcount, result/10e9);
+	printf("%-40s\t%12d\t%12f\n", argv[1], ds.wordcount, result/10e9);
 	dataset_die(&ds);
-	/* end of program */
 	return 0;
 }

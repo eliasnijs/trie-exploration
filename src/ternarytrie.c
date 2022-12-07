@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "utils/base.h"
-#include "utils/m_utils.c"
-#include "utils/m_pool.c"
+/* #include "utils/m_utils.c" */
+/* #include "utils/m_pool.c" */
 
 /* Implementation of the Ternary Trie Datastructure. The rationale and specifics
  * of this structure can be found in the following paper:
