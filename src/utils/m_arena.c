@@ -4,10 +4,9 @@
  * stdio.h, stdlib.h, stdint.h, base.h, utils.h */
 
 /* Memory Arena:
- * One big container, allocations always happen at the end.
- * The memory is freed all at once. (memory is persistent until
- * the arena is destroyed).
- * Memory is not guaranteed to be zeroed.
+ * One big container, allocations always happen at the end. The memory is freed
+ * all at once. (memory is persistent until the arena is destroyed). Memory is
+ * not guaranteed to be zeroed.
  * */
 
 /* macros */

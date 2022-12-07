@@ -4,10 +4,9 @@
  * stdio.h, stdlib.h, stdint.h, base.h, utils.h */
 
 /* Memory Pool:
- * One big container of same sized chuncks.
- * The memory is freed all at once. (memory is persistent until
- * the arena is destroyed).
- * Memory is guaranteed to be zeroed.
+ * One big container of same sized chuncks. The memory is freed all at once.
+ * (memory is persistent until the arena is destroyed). Memory is guaranteed to
+ * be zeroed.
  * */
 
 /* enumerations, structs, unions */

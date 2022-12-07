@@ -656,7 +656,7 @@ internal int32
 tests_trie_add_way_more(TestUtilsState *testutilsstate)
 {
 	struct trie trie = TestsTrieModel;
-	trie_init_wmem(&trie, Kilobytes(100));
+	trie_init(&trie);
 	TestUtils_Assert(trie.t != 0x0);
   	testutilsstate->cleanupargs = (void *)&trie;
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
@@ -702,7 +702,7 @@ internal int32
 tests_trie_remove_way_more(TestUtilsState *testutilsstate)
 {
 	struct trie trie = TestsTrieModel;
-	trie_init_wmem(&trie, Kilobytes(100));
+	trie_init(&trie);
 	TestUtils_Assert(trie.t != 0x0);
   	testutilsstate->cleanupargs = (void *)&trie;
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
@@ -755,8 +755,7 @@ internal int32
 tests_trie_dataset(TestUtilsState *testutilsstate, char *path)
 {
 	struct trie trie = TestsTrieModel;
-	trie_init_wmem(&trie, Megabytes(100));
-	/* trie_init(&trie); */
+	trie_init(&trie);
 	TestUtils_Assert(trie.t != 0);
   	testutilsstate->cleanupargs = (void *)&trie;
   	testutilsstate->cleanup     = (void (*)(void *))trie_free;
@@ -837,6 +836,12 @@ tests_trie_dataset_large(TestUtilsState *testutilsstate)
 }
 
 internal int32
+tests_trie_dataset_globosum(TestUtilsState *testutilsstate)
+{
+	return tests_trie_dataset(testutilsstate, "resources/globosum.g6");
+}
+
+internal int32
 tests_trie_dataset_words(TestUtilsState *testutilsstate)
 {
 	return tests_trie_dataset(testutilsstate,
@@ -877,6 +882,7 @@ global_variable TestUtilsTest tests_trie[] = {
 	TestUtils_Make_Test(tests_trie_dataset_small),
 	TestUtils_Make_Test(tests_trie_dataset_middle),
 	TestUtils_Make_Test(tests_trie_dataset_large),
+	TestUtils_Make_Test(tests_trie_dataset_globosum),
 	TestUtils_Make_Test(tests_trie_dataset_words),
 };
 

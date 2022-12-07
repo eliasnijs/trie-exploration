@@ -40,13 +40,17 @@ dataset_file_load(char *path, struct dataset *ds)
  * */
 	FILE *f = fopen(path, "r");
 	if (!f) {
-		DebugLogError("failed to read file at: %s", path);
+		fprintf(stderr, "failed to read file at: %s", path);
 		return 1;
 	}
 	uint32 flen = filelen(f);
 	ds->backbuffer = (char *)calloc(flen, sizeof(char));
-	fread(ds->backbuffer, sizeof(char), flen, f);
+	uint32 frr = fread(ds->backbuffer, sizeof(char), flen, f);
 	fclose(f);
+	if (frr != flen) {
+		fprintf(stderr, "failed to read file at: %s", path);
+		return 1;
+	}
 	ds->len = flen;
 	ds->wordcount = 0;
 	for (uint32 i = 0; i < flen; ++i) {

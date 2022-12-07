@@ -1,8 +1,7 @@
 #ifndef BASE_UTILS_H
 
 /* depends on:
- * stdio.h, stdlib.h, base.h, time.h
- * */
+ * stdio.h, stdlib.h, base.h, time.h */
 
 /* macros and typedefs */
 
@@ -13,7 +12,6 @@ internal bool32 is_pow_of_two(uintptr_t addr);
 internal uintptr_t ptr_align_forward(uintptr_t p, size_t align);
 
 /* function implementations */
-
 internal bool32
 is_pow_of_two(uintptr_t addr)
 {

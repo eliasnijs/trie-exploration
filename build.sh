@@ -29,36 +29,36 @@ compiler="cc"
 
 flags=""
 if [ "$1" = "r" ]; then
-  echo "[BUILDING]: compiling for release build..."
+  echo "[build.sh]: set release flags"
   flags=$release_flags
 else
-  echo "[BUILDING]: compiling for debug build..."
+  echo "[build.sh]: set debug flags"
   flags=$debug_flags
 fi
 
-echo "[BUILDING]: building static trie library..."
+echo "[build.sh]: building static trie library..."
 
-echo "[BUILDING]: compiling ternarytrie..."
+echo "[build.sh]: compiling ternarytrie..."
 ${compiler} -c ${flags} -o build/libternarytrie.o src/ternarytrie.c
-echo "[BUILDING]: compiling arraytrie..."
+echo "[build.sh]: compiling arraytrie..."
 ${compiler} -c ${flags} -o build/libarraytrie.o src/arraytrie.c
-echo "[BUILDING]: compiling customtrie..."
+echo "[build.sh]: compiling customtrie..."
 ${compiler} -c ${flags} -o build/libcustomtrie.o src/customtrie.c
-echo "[BUILDING]: finished compiling"
+echo "[build.sh]: finished compiling tries"
 
-echo "[BUILDING]: creating library..."
+echo "[build.sh]: creating library..."
 ar rcs build/libtries.a build/libternarytrie.o build/libcustomtrie.o build/libarraytrie.o
 rm build/libternarytrie.o build/libcustomtrie.o build/libarraytrie.o
-echo "[BUILDING]: finished creating library"
+echo "[build.sh]: finished creating library"
 
-echo "[BUILDING]: trie library complete"
+echo "[build.sh]: trie library complete"
 
 
-echo "[BUILDING]: building test program..."
+echo "[build.sh]: building test program..."
 ${compiler} ${flags} -o "build/tests" "tests/tests.c" -lncurses -L build/ -ltries
-echo "[BUILDING]: finished building test program..."
+echo "[build.sh]: finished building test program"
 
 
-echo "[BUILDING]: building benchmark program..."
+echo "[build.sh]: building benchmark program..."
 ${compiler} ${flags} -o "build/benchmarks" "benchmarks/benchmarks.c" -L build/ -ltries
-echo "[BUILDING]: finished building benchmark program..."
+echo "[build.sh]: finished building benchmark program"

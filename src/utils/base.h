@@ -1,5 +1,8 @@
 #ifndef BASE_H
 
+/* depends on:
+ * stdio.h, stdint.h */
+
 /* types */
 typedef int8_t   int8;
 typedef int16_t  int16;
@@ -42,7 +45,6 @@ typedef int64    bool64;
 #define Megabytes(v)	(Kilobytes(v)*1024LL)
 #define Gigabytes(v)	(Megabytes(v)*1024LL)
 #define Terabytes(v)	(Gigabytes(v)*1024LL)
-
 
 #define AssertBreak() (*(int *)0 = 0)
 #if ENABLE_ASSERT

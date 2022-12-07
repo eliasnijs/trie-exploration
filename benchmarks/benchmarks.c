@@ -15,14 +15,24 @@
 
 #include "../utils/trie.c"
 
+/* Trie Benchmarking Program
+ *
+ * Syntax:
+ * benchmark <trie> <filepath> <benchmark index>
+ * <trie>                  name of the trie
+ * <filepath>              path to a dataset file
+ * <benchmark index>       index of the benchmark
+ * */
+
+
 /* helpers */
+#define Benchmark_Make(b) {#b, b}
 typedef uint64 (* benchmark_fptr)(struct trie *t, struct dataset *ds);
 
-internal void
-print_error_msg(char *systemname, char *msg)
-{
-	fprintf(stderr, "%s: %s\n", systemname, msg);
-}
+struct benchmark {
+	char *name;
+	benchmark_fptr run;
+};
 
 /* benchmarks */
 internal uint64
@@ -89,20 +99,39 @@ benchmark_mix(struct trie *trie, struct dataset *ds)
 }
 
 /* benchmarks batch */
-global_variable benchmark_fptr benchmarks[] = {
-	benchmark_add,
-	benchmark_search,
-	benchmark_remove
+global_variable struct benchmark benchmarks[] = {
+	Benchmark_Make(benchmark_add),
+	Benchmark_Make(benchmark_search),
+	Benchmark_Make(benchmark_remove),
+	Benchmark_Make(benchmark_mix)
 };
 
 /* main */
 int32
 main(int32 argc, char *argv[])
 {
+	/* handle commandline arguments */
 	argc -= 1;
 	argv = &argv[1];
+	if (argc > 0 && !strcmp(argv[0], "-h")) {
+		printf("\n");
+		printf("Trie Benchmarking Program\n");
+		printf("\n");
+		printf("syntax:\n");
+		printf("benchmark <trie> <filepath> <benchmark index>\n");
+		printf("<trie>			name of the trie\n");
+		printf("<filepath>		path to a dataset file\n");
+		printf("<benchmark index>	index of the benchmark\n");
+		printf("\n");
+		printf("available benchmarks: \n");
+		for (uint32 i = 0; i < ArrayLength(benchmarks); ++i) {
+			printf("%2d. %s\n", i + 1, benchmarks[i].name);
+		}
+		printf("\n");
+		return 0;
+	}
 	if (argc != 3) {
-		print_error_msg("benchmarks", "wrong number of arguments");
+		fprintf(stderr, "wrong number of arguments\n");
 		return 1;
 	}
 	struct trie trie = {0};
@@ -113,25 +142,26 @@ main(int32 argc, char *argv[])
 	} else if (!strcmp(argv[0], "custom")) {
 		trie = CustomTrieModel;
 	} else {
-		print_error_msg("benchmarks", "unknown trie");
+		fprintf(stderr, "unknown trie");
 		return 1;
 	}
 	FILE *f = fopen(argv[1], "r");
 	if (!f) {
-		printf("%s\n", argv[1]);
-		print_error_msg("benchmarks", "cannot open provided file");
+		fprintf(stderr, "cannot open provided file\n");
 		return 1;
 	}
 	fclose(f);
 	uint32 i_benchmark = atoi(argv[2]);
 	if (i_benchmark < 1 || i_benchmark > ArrayLength(benchmarks)) {
-		print_error_msg("benchmarks", "wrong benchmark index");
+		fprintf(stderr, "wrong benchmark index\n");
 		return 1;
 	}
+	/* run benchmark */
 	struct dataset ds = {0};
 	dataset_file_load(argv[1], &ds);
-	uint64 result = benchmarks[i_benchmark - 1](&trie, &ds);
+	uint64 result = benchmarks[i_benchmark - 1].run(&trie, &ds);
 	printf("%-22s\t%12d\t%12f\n", argv[1], ds.wordcount, result/10e9);
 	dataset_die(&ds);
+	/* end of program */
 	return 0;
 }
