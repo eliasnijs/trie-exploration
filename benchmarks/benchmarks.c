@@ -80,30 +80,11 @@ benchmark_remove(struct trie *trie, struct dataset *ds)
 	return end_t - start_t;
 }
 
-internal uint64
-benchmark_mix(struct trie *trie, struct dataset *ds)
-{
-	srand(nanos());
-	trie_init(trie);
-	for (uint32 i = 0; i < ds->wordcount; i += 2) {
-		trie_add(trie, ds->words[i]);
-	}
-	uint64 start_t = nanos();
-	for (uint32 i = 0; i < ds->wordcount; ++i) {
-		int32 operation = rand() % 3;
-		trie->oper[i](trie->t, ds->words[i]);
-	}
-	uint64 end_t = nanos();
-	trie_free(trie);
-	return end_t - start_t;
-}
-
 /* benchmarks batch */
 global_variable struct benchmark benchmarks[] = {
 	Benchmark_Make(benchmark_add),
 	Benchmark_Make(benchmark_search),
 	Benchmark_Make(benchmark_remove),
-	Benchmark_Make(benchmark_mix)
 };
 
 /* main */
