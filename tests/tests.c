@@ -818,30 +818,30 @@ internal int32
 tests_trie_dataset_verysmall(TestUtilsState *testutilsstate)
 {
 	return tests_trie_dataset(testutilsstate,
-				  "resources/geschud_piepklein.g6");
+				  "resources/geschud/geschud_piepklein.g6");
 }
 internal int32
 tests_trie_dataset_small(TestUtilsState *testutilsstate)
 {
-	return tests_trie_dataset(testutilsstate, "resources/geschud_klein.g6");
+	return tests_trie_dataset(testutilsstate, "resources/geschud/geschud_klein.g6");
 }
 internal int32
 tests_trie_dataset_middle(TestUtilsState *testutilsstate)
 {
 	return tests_trie_dataset(testutilsstate,
-				  "resources/geschud_middelmaat.g6");
+				  "resources/geschud/geschud_middelmaat.g6");
 }
 internal int32
 tests_trie_dataset_large(TestUtilsState *testutilsstate)
 {
-	return tests_trie_dataset(testutilsstate, "resources/geschud_groot.g6");
+	return tests_trie_dataset(testutilsstate, "resources/geschud/geschud_groot.g6");
 }
 
 internal int32
 tests_trie_dataset_words(TestUtilsState *testutilsstate)
 {
 	return tests_trie_dataset(testutilsstate,
-				  "resources/words_shuffled.txt");
+				  "resources/geschud/words_shuffled.txt");
 }
 
 

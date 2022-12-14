@@ -52,14 +52,19 @@ en tot slot een semi-splay ternary
 trie.
 
 De patricia trie is een geheugen-efficiente trie. Deze efficientie wordt bereikt
-door enkel volledige woorden op te slaan, in plaats van alle mogelijke
-voorvoegsels. Dit maak het ideaal voor toepassingen waar geheugen beperkt is.
+door enkel nodes voor vertakking op te slaan in plaats van voor alle karakters.
+
+De ternary trie is een trie waarbij elk mogelijk volgend karakter opgeslaan wordt in
+een binaire boom. Daarboven op bevat elke node ook nog een pointer die naar de
+volgende binaire boom wijst. Op deze manier slaagt ook deze trie variant erin om
+heel geheugen efficient te zijn.
 
 De laatste trie die we zullen bekijken, de semisplay ternary trie, is een
 variant van de ternary trie waarin de semisplay operatie verwerkt is. Het idee
-achter deze boom is dat meer voorkomende prefixen dicther bij de wortel te
+achter deze boom is om meer voorkomende prefixen dicther bij de wortel te
 brengen en zo zoekoperaties te versnellen. In de analyse zal blijken of de tijd
-die de splay operatie inneemt opweegt tegenover de gewonnen tijd.
+die de splay operatie inneemt opweegt tegenover de gewonnen tijd die de
+herbalancering ons geeft.
 
 In dit verslag zullen we de eigenschappen, implementaties en efficientie van
 deze tries in detail bespreken. Daarnaast zullen we ook de verschillende tries
@@ -75,11 +80,9 @@ PATRICIA
 PATRICIA, kort voor
 .I "Practical Algorithm To Retrieve Information Coded in Alphanumeric"
 , is een trie structuur ontwikkeld door Donald R. Morrison in 1968. Deze trie is
-een geheugen efficiente varient op de traditionele trie structuur. Het idee
+een geheugen efficiente variant op de traditionele trie structuur. Het idee
 achter deze efficientie is om enkel vertakkingen op te slaan en geen lange paden
-waardoor het aantal nodes in de boom aanzienelijk daalt. Dit maakt de
-trie bijzonder interessant voor applicaties waar geheugen beperkt is, zoals in
-embedded systems.
+waardoor het aantal nodes in de boom aanzienelijk daalt.
 .NH 3
 Overslaan van karakters
 .LP
@@ -107,7 +110,6 @@ Implementatie
 .LP
 De implemenatie kan teruggevonden worden onder
 .CW "src/arraytrie.c" .
-
 
 We bespreken nu kort enkele implementatie details.
 
@@ -195,7 +197,6 @@ We kunnen dit ook verifieren aan de hand van een kleine benchmark.
 .PSPIC -C "images/array_all.eps"
 .LP
 Een grotere analyse van de performantie volgt later.
-
 .NH 2
 Ternary Trie
 .LP
@@ -210,10 +211,10 @@ hij vaak gebruikt voor programmas zoals autocomplete.
 Staart compressie
 .LP
 Om te voorkomen dat we op het einde lange staarten hebben zonder vertakking,
-wordt er vaak geopteerd om de staart te comprimeren naar 1 node. We kunnen dit
-op 2 manieren doen. De eerste manier is om telkens de volledige key op het einde
+wordt er vaak geopteerd om de staart te comprimeren naar e\*[']e\*[']n node. We kunnen dit
+op twee manieren doen. De eerste manier is om telkens de volledige key op het einde
 op te slaan en de tweede manier is om de resterende karakters van de key op het
-einde op te slaan. Welke van deze 2 er gebruikt wordt is een afweging tussen
+einde op te slaan. Welke van deze twee er gebruikt wordt is een afweging tussen
 geheugen gebruik en snelheid.
 .NH 3
 Implementatie
@@ -253,7 +254,7 @@ Daarnaast hebben we ook de structuur
 .I ttrie_node
 die een node representeert.
 Deze node houdt een aantal zaken bij. Het eerste dat deze node bijhoudt zijn de
-pointers naar de volgende nodes. In onze structuur kunnen we deze op 2 manieren
+pointers naar de volgende nodes. In onze structuur kunnen we deze op twee manieren
 addresseren. We kunnen ten eerste deze addresseren via de array
 .I cs
 en ten tweede met hun naam,
@@ -346,12 +347,11 @@ De semisplay operatie bestaat erin het gevolgde pad te semisplayen. Meer
 bepaalde zal dit bij een ternary trie beteken dat elke binarie boom die op ons
 pad ligt zal gesemisplayed worden.
 
-We is beter te zien aan het volgende voorbeeld. In dit voorbeeld zoeken we de
+Dit is beter te zien aan het volgende voorbeeld. In dit voorbeeld zoeken we de
 key
 .I trie
 en zien we hoe de trie zich daarna balanceert.
 .PSPIC -C "images/tsst.eps"
-
 .NH 3
 Implementatie
 .LP
@@ -404,7 +404,7 @@ en als laatste een node uit de linked list die het play pad bijhoudt,
 We kijken eerst naar de wrapper. De wrapper bevat de wortel van de trie en
 hoeveel woorden er aanwezig zijn net zoals in de implementatie van de ternary
 trie. Naast deze variablen bevat de wrapper ook data omtrent het splay gedeelte.
-Deze dat bestaat ten eerste uit een splayhead. Deze pointer wijst naar de eerste
+Deze data bestaat ten eerste uit een splayhead. Deze pointer wijst naar de eerste
 node van de linked list die het splaypad bijhoudt. Verder hebben we ook nog de
 splaycount, deze houdt bij hoeveel nodes er in de lijst zitten. Tot slot hebben
 we nog de splayroot, deze pointer wijst naar de pointer die naar de root van de
@@ -474,17 +474,125 @@ ook niet in detail besproken.
 .NH 3
 Complexiteit
 .LP
-De complexiteit van deze boom is $O(m)$.
+De complexiteit van deze boom is $O(log(n))$.
 
-We kunnen dit ook verifieren aan de hand van een kleine benchmark.
-.PSPIC -C "images/custom_all.eps"
-.LP
-Een grotere analyse van de performantie volgt in de volgende paragraaf.
-
+Dit komt doordat de trie constant geherbalanceerd wordt. Het aantal nodes dat we
+moeten doorlopen zal dus nooit zeer extreem groeien.
 .NH 1
 Analyse
 .LP
- ...
+In deze paragraaf zullen verschillende vergelijkingen maken op vlak van zowel
+snelheid als geheugengebruik.
 
+Deze analyses werden uitgevoerd op een reeks bestanden gegenereerd aan de hand
+van blok-circulante Ramsey grafen.
 
+Deze bestanden zijn de volgende:
+.TS
+expand tab(;);
+lb rb
+__
+l r.
+Naam;Aantal woorden
+geschud_piepklein.g6;1000
+geschud_klein.g6;10000
+geschud_middelmaat.g6;100000
+geschud_groot.g6;500000
+geschud_heelgroot.g6;1000000
+geschud.g6;1743797
+.TE
+.NH 2
+Tijd analyse
+.NH 3
+Analyse operaties
+.LP
+We beginnen met een analyse van de alleenstaande operaties. Voor elk van deze
+werd door alle woorden gelopen en telkens de operatie toegepast.
+.NH 4
+Zoeken
+.LP
+Deze grafiek toont de snelheid van de verschillende tries bij zoek
+operaties.
+.PSPIC -C "images/search_comparison.eps"
+.LP
+We zien dat de patricia trie hier het best presteert en de semisplay ternary het
+slechtst.
+.NH 4
+Toevoegen
+.LP
+Deze grafiek toont de snelheid van de verschillende tries bij toevoeg
+operaties.
+.PSPIC -C "images/add_comparison.eps"
+.LP
+We zien ook hier dat de patricia trie het best presteert en de semisplay ternary het
+slechtst.
+.NH 4
+Verwijderen
+.LP
+Deze grafiek toont de snelheid van de verschillende tries bij verwijder
+operaties.
+.PSPIC -C "images/remove_comparison.eps"
+.LP
+We zien dat de ternary trie het best presteert en de patricia trie het slechtst
+presteert.
+.NH 3
+Globale analyse
+.LP
+Verder werd ook een analyse op een mix van operaties gedaan om een beter globaal
+beeld te krijgen.
+.PSPIC -C "images/mix_comparison.eps"
+.LP
+Hier zien we dat de patricia trie het best presteert en de semisplay ternary het
+slechtst.
+.NH 3
+Terugkomende prefixen
+.LP
+Tot slot kijken we specifiek naar de snelheid van de verschillende tries bij
+vaak terugkomende woorden. Om dit te testen voegen we eerst alle woorden toe en
+zoeken vervolgens een aantal keer hetzelfde woorden op.
+.PSPIC -C "images/reoccuring_comparison.eps"
+.LP
+In dit geval zouden we verwachten dat de semisplay ternary het best presteert
+vermits deze het woord dichter bij de wortel zal brengen.
+Dit is echter niet geval. Integendeel, de ternary semisplay presteert het
+slechtst.
+.NH 3
+Tijd conclusie
+.LP
+We besluiten dat in het geval van weinig verwijder operaties men op vlak van
+snelheid het best voor de patricia trie kiest. Indien men wel veel verwijder
+operaties nodig heeft, is het voordeliger om voor de ternary trie te kiezen.
+In het algemeen kunnen we ook besluiten dat de semisplay ternary het slechtst presteert.
+Helaas blijkt dat bij de semisplay
+ternary de tijd die we winnen door de trie te balanceren niet opweegt tegenover
+de tijd die we verliezen met de semisplay operatie zelf. Dit is opmerkelijk
+vermits de tijd complexiteit van deze trie $O(log(n))$ is terwijl deze bij de
+andere twee $O(n)$ is.
+.NH 2
+Geheugen verbruik
+.LP
+Om het geheugen gebruik te vergelijken voegen we alle woorden toe en kijken
+naar het peak-geheugen verbruik. Merk op dat dit geen absolute benchmark is. Om
+het geheugengebruik te gaan meten maken immers gebruik van valgrind. Valgrind
+geeft echter het totale gebruik terug. Dit bevat dus ook bijvoorbeeld de data
+van het bestand die de woorden bevat.
 
+We krijgen het volgende resultaat.
+.PSPIC -C "images/mem_comparison.eps"
+.LP
+Hier zien we dat de ternary en semisplay ternary ongeveer gelijk lopen. De
+semisplay ternary verbruikt een heel klein beetje minder memory. De patricia
+trie daarentegen verbruikt aanzienelijk veel meer geheugen.
+.NH 3
+Geheugen conclusie
+.LP
+Indien men zoveel mogelijk geheugen wil uitsparen, gebruikt men het best de
+semisplay ternary trie. Dit is opmerkelijk aangezien deze in principe meer data
+moet opslaan.
+.NH 1
+Slotnoot
+.LP
+In conclusie, ternary, patricia en semisplay ternary tries zijn alle drie
+datastructuren voor het efficient opslaan en opvragen van multikey data. We
+hadden verwacht de de semisplay ternary voordelig zou zijn wanneer woorden vaak
+terugkomen. Dit bleek echter niet het geval te zijn.

@@ -89,7 +89,7 @@ search ze in omgekeerde
 remove ze in omgekeerde volgorde
 */
 internal uint64
-benchmark_add_srch_rem_add_srch_rem(struct trie *trie, struct dataset *ds)
+benchmark_mix(struct trie *trie, struct dataset *ds)
 {
 	trie_init(trie);
 	uint64 start_t = nanos();
@@ -116,15 +116,33 @@ benchmark_add_srch_rem_add_srch_rem(struct trie *trie, struct dataset *ds)
 	return end_t - start_t;
 }
 
+internal uint64
+benchmark_reoccuring(struct trie *trie, struct dataset *ds)
+{
+	trie_init(trie);
+	uint64 start_t = nanos();
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		trie_add(trie, ds->words[i]);
+	}
+	for (uint32 i = 0; i < ds->wordcount; ++i) {
+		trie_search(trie, ds->words[(ds->wordcount - 1)/2]);
+	}
+	uint64 end_t = nanos();
+	trie_free(trie);
+	return end_t - start_t;
+}
+
 /* benchmarks batch */
 global_variable struct benchmark benchmarks[] = {
 	Benchmark_Make(benchmark_add),
 	Benchmark_Make(benchmark_search),
 	Benchmark_Make(benchmark_remove),
-	Benchmark_Make(benchmark_add_srch_rem_add_srch_rem),
+	Benchmark_Make(benchmark_mix),
+	Benchmark_Make(benchmark_reoccuring),
 };
 
 /* main */
+#define RUNCNT 2
 int32
 main(int32 argc, char *argv[])
 {
@@ -176,9 +194,13 @@ main(int32 argc, char *argv[])
 	/* run benchmark */
 	struct dataset ds = {0};
 	dataset_file_load(argv[1], &ds);
-	uint64 result = benchmarks[i_benchmark - 1].run(&trie, &ds);
-	/* printf("%-40s\t%12d\t%12f\n", argv[1], ds.wordcount, result/10e9); */
-	printf("%ld", result);
+	uint64 result = 0;
+	for (uint32 i = 0; i < RUNCNT; ++i) {
+		result += benchmarks[i_benchmark - 1].run(&trie, &ds);
+	}
+	/* printf("%-40s\t%12d\t%12f\n", argv[1], ds.wordcount, */
+	/*        (real64)result/RUNCNT/10e9); */
+	printf("%f\n", (real64)result/RUNCNT);
 	dataset_die(&ds);
 	return 0;
 }
