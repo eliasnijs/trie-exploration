@@ -166,10 +166,10 @@ kunnen besparen.
 Onze implementatie ondersteunt alle verwachte operaties:
 .IP \[bu] 2
 .ps -1
-.CW "init: () -> atrie "
+.CW "init: void -> atrie "
 .IP \[bu]
 .ps -1
-.CW "free: atrie -> () "
+.CW "free: atrie -> void "
 .IP \[bu]
 .ps -1
 .CW "search: (atrie, string) -> bool"
@@ -187,14 +187,8 @@ Onze implementatie ondersteunt alle verwachte operaties:
 De implementaties van al deze zijn relatief straight-forward en worden hier dus
 niet in detail bekeken.
 .NH 3
-Complexiteit
-.LP
-De complexiteit van deze boom is $O(m)$.
-
-We kunnen dit ook verifieren aan de hand van een kleine benchmark.
+Benchmarks
 .PSPIC -C "images/array_all.eps"
-.LP
-Een grotere analyse van de performantie volgt later.
 
 .NH 2
 Ternary Trie
@@ -280,10 +274,10 @@ gebruiken om te checken of de node een blad is.
 Net zoals bij de patricia trie werden de volgende operaties geimplementeerd:
 .IP \[bu] 2
 .ps -1
-.CW "init: () -> ttrie "
+.CW "init: void -> ttrie "
 .IP \[bu]
 .ps -1
-.CW "free: ttrie -> () "
+.CW "free: ttrie -> void "
 .IP \[bu]
 .ps -1
 .CW "search: (ttrie, string) -> bool"
@@ -321,165 +315,18 @@ operatie kan vrijgeven door de backbuffer vrij te geven.
 .NH 3
 Complexiteit
 .LP
-De complexiteit van deze boom is $O(m)$.
+De complexiteit van deze boom is O(m).
 
 We kunnen dit ook verifieren aan de hand van een kleine benchmark.
 .PSPIC -C "images/ternary_all.eps"
-.LP
-Een grotere analyse van de performantie volgt later.
+
+
+
+
 .NH 2
 Semisplay Ternary Trie
 .LP
-De semisplay ternary trie is een variant op de ternary trie waarin de semisplay
-operatie verwerkt is. Het idee achter deze trie is om aan de hand van de
-semisplay operatie vaak voorkomende prefixen naar boven te splayen. Op deze
-manier zullen we een beter gebalanceerde structuur krijgen en zal het opzoeken
-van vaak voorkomende woorden sneller verlopen.
-
-Deze trie is mijn custom trie. Of
-deze performant is en of de trie sneller is dan een normale ternary trie zal
-moeten blijken in de analyse die later volgt.
-.NH 3
-De semisplay operatie
-.LP
-De semisplay operatie bestaat erin het gevolgde pad te semisplayen. Meer
-bepaalde zal dit bij een ternary trie beteken dat elke binarie boom die op ons
-pad ligt zal gesemisplayed worden.
-
-We is beter te zien aan het volgende voorbeeld. In dit voorbeeld zoeken we de
-key
-.I trie
-en zien we hoe de trie zich daarna balanceert.
-.PSPIC -C "images/tsst.eps"
-
-.NH 3
-Implementatie
-.LP
-De code voor deze trie val terug te vinden onder
-.CW src/customtrie.c .
-.LP
-.NH 4
-Structuur
-.LP
-We beginnen terug met eerst naar de structuur te kijken.
-.BD
-.CW
-.ps -1
-struct ctrie_splay_node {
-	struct ctrie_splay_node *next;
-	struct ctrie_node *node;
-};
-
-.KS
-struct ctrie_node  {
-	char *s;
-	char splitchar;
-	union {
-		struct ctrie_node *cs[3];
-		struct {
-			struct ctrie_node
-				*lo, *hi, *eq;
-		};
-	};
-};
-.KE
-
-struct ctrie {
-	struct ctrie_node *root;
-	size_t wc;
-	size_t splaycnt;
-	struct ctrie_splay_node *splayhead;
-	struct ctrie_node **splayroot;
-};
-.ps +1
-.DE
-.LP
-De structuur van onze implementatie bestaat uit drie delen: een wrapper,
-.I "ctrie",
-een node uit de trie,
-.I "ctrie_node",
-en als laatste een node uit de linked list die het play pad bijhoudt,
-.I "ctrie_splay_node".
-
-We kijken eerst naar de wrapper. De wrapper bevat de wortel van de trie en
-hoeveel woorden er aanwezig zijn net zoals in de implementatie van de ternary
-trie. Naast deze variablen bevat de wrapper ook data omtrent het splay gedeelte.
-Deze dat bestaat ten eerste uit een splayhead. Deze pointer wijst naar de eerste
-node van de linked list die het splaypad bijhoudt. Verder hebben we ook nog de
-splaycount, deze houdt bij hoeveel nodes er in de lijst zitten. Tot slot hebben
-we nog de splayroot, deze pointer wijst naar de pointer die naar de root van de
-laast gepasseerde binaire boom wijst. Deze laatste variable zorgt ervoor dat we
-de laatste stap van een splay operatie correct kunnen uitvoeren. Het kan immers
-zijn dat de binarie boom een nieuwe wortel krijgt. Deze moete we dan correct
-terug in de trie hangen aan de hand van deze splayroot.
-
-De structuur van
-.I ctrie_node
-is exact dezelfde als deze van een node in de ternary trie.
-
-Als laatste hebben we nog de
-.I "ctrie_splay_node".
-Deze structuur representeert een node in een linked list. Hij bevat een
-pointer naar de data en naar de volgende node.
-.NH 4
-Operaties
-.LP
-Net zoals bij de ternary trie werden de volgende operaties geimplementeerd:
-.IP \[bu] 2
-.ps -1
-.CW "init: () -> ttrie "
-.IP \[bu]
-.ps -1
-.CW "free: ttrie -> () "
-.IP \[bu]
-.ps -1
-.CW "search: (ttrie, string) -> bool"
-.IP \[bu]
-.ps -1
-.CW "add: (ttrie, string) -> bool"
-.IP \[bu]
-.ps -1
-.CW "remove:(ttrie, string) -> bool"
-.IP \[bu]
-.ps -1
-.CW "size: ttrie -> size_t"
-.ps +1
-.LP
-
-Naast deze operaties zijn er ook een aantal interne operaties om de semisplay
-operatie te verrichten.
-
-We hebben volgende functies voor de operaties op de lijst die ons splaypad
-bijdhoudt. Deze lijst gedraagt zich als een lifo.
-.IP \[bu] 2
-.ps -1
-.CW "splay_push: (ctrie, ctrie_node)->() "
-.IP \[bu] 2
-.ps -1
-.CW "splay_pop: ctrie -> ctrie_node "
-.IP \[bu] 2
-.ps -1
-.CW "splay_clear: ctrie -> () "
-.ps +1
-.LP
-Tot slot hebben we de splay operatie zelf.
-.IP \[bu] 2
-.ps -1
-.CW "splay: ctrie -> () "
-.ps +1
-.LP
-
-De implementatie van deze operaties is relatief straight-forward. Deze worden dan
-ook niet in detail besproken.
-.NH 3
-Complexiteit
-.LP
-De complexiteit van deze boom is $O(m)$.
-
-We kunnen dit ook verifieren aan de hand van een kleine benchmark.
-.PSPIC -C "images/custom_all.eps"
-.LP
-Een grotere analyse van de performantie volgt in de volgende paragraaf.
+ ...
 
 .NH 1
 Analyse
@@ -488,3 +335,30 @@ Analyse
 
 
 
+.NH 1
+padding
+.lp
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
+this is padding! this is padding! this is padding! this is padding!
