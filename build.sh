@@ -53,7 +53,6 @@ echo "[build.sh]: finished creating library"
 
 echo "[build.sh]: trie library complete"
 
-
 echo "[build.sh]: building test program..."
 ${compiler} ${flags} -o "build/tests" "tests/tests.c" -lncurses -L build/ -ltries
 echo "[build.sh]: finished building test program"

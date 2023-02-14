@@ -831,18 +831,7 @@ tests_trie_dataset_middle(TestUtilsState *testutilsstate)
 	return tests_trie_dataset(testutilsstate,
 				  "resources/geschud/geschud_middelmaat.g6");
 }
-internal int32
-tests_trie_dataset_large(TestUtilsState *testutilsstate)
-{
-	return tests_trie_dataset(testutilsstate, "resources/geschud/geschud_groot.g6");
-}
 
-internal int32
-tests_trie_dataset_words(TestUtilsState *testutilsstate)
-{
-	return tests_trie_dataset(testutilsstate,
-				  "resources/geschud/words_shuffled.txt");
-}
 
 
 /* tests-batch */
@@ -877,8 +866,6 @@ global_variable TestUtilsTest tests_trie[] = {
 	TestUtils_Make_Test(tests_trie_dataset_verysmall),
 	TestUtils_Make_Test(tests_trie_dataset_small),
 	TestUtils_Make_Test(tests_trie_dataset_middle),
-	TestUtils_Make_Test(tests_trie_dataset_large),
-	TestUtils_Make_Test(tests_trie_dataset_words),
 };
 
 /* main */

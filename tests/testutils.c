@@ -168,7 +168,7 @@ testutils_tui_render_select(WINDOW *win, TestUtilsTest *tests, int32 testcount,
 			    int32 *selected_index)
 {
 	wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
-  	TestUtils_Tui_Bold(win, mvwprintw(win, 0, 2, "TESTS(%d)", testcount));
+  	TestUtils_Tui_Bold(win, mvwprintw(win, 0, 2, "TESTS(%d)", testcount));s
   	if (*selected_index == 0) {
 		TestUtils_Tui_Bold(win, mvwprintw(win, 1, 1, ">     All tests"));
   	} else {
