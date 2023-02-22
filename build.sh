@@ -48,6 +48,7 @@ echo "[build.sh]: finished compiling tries"
 
 echo "[build.sh]: creating library..."
 ar rcs build/libtries.a build/libternarytrie.o build/libcustomtrie.o build/libarraytrie.o
+ar rcs build/libarraytrie.a build/libarraytrie.o
 rm build/libternarytrie.o build/libcustomtrie.o build/libarraytrie.o
 echo "[build.sh]: finished creating library"
 

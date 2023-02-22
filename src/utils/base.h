@@ -31,7 +31,7 @@ typedef int64    bool64;
 #define MEM_DEFAULT_ALIGNMENT (2*sizeof(void *))
 #endif
 
-#define Stmnt(S) do{S}while(0)
+#define Stmnt(S)	do{S}while(0)
 #define ArrayLength(a)  (sizeof(a)/sizeof(*(a)))
 #define Min(a,b)        (((a)<(b))?(a):(b))
 #define Max(a,b)        (((a)>(b))?(a):(b))
@@ -39,7 +39,6 @@ typedef int64    bool64;
 #define ClampBot(a,b)   (Max((a),(b)))
 #define ClampTop(a,b)   (Min((a),(b)))
 #define Abs(a)          (((a)<0)?(-(a)):(a))
-#define Swap(x, y, T)   Stmnt(T SWAP = x; x = y; y = SWAP;)
 #define OffsetOf(t, e)  ((size_t)&(((t *)0)->e))
 #define Kilobytes(v)	((v)*1024LL)
 #define Megabytes(v)	(Kilobytes(v)*1024LL)
